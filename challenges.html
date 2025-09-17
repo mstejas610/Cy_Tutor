@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Challenges - CyTutor</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="stylesheet" href="styles/challenges.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <link rel="stylesheet" href="styles/app.css">
 </head>
 <body>
@@ -25,12 +28,12 @@
           <div class="user-profile-toggle">
             <div class="user-avatar">JD</div>
             <span class="user-name">John Doe</span>
-            <i class="fas fa-chevron-down"></i>
+            <i data-lucide="chevron-down"></i>
           </div>
           <div class="dropdown-menu">
-            <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
-            <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
-            <a href="#" class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="profile.html"><i data-lucide="user"></i> Profile</a>
+            <a href="settings.html"><i data-lucide="settings"></i> Settings</a>
+            <a href="#" class="logout-btn" onclick="handleLogout()"><i data-lucide="log-out"></i> Logout</a>
           </div>
         </div>
       </div>
@@ -231,6 +234,12 @@
   </main>
 
   <script src="scripts/main.js"></script>
+  <script>
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  </script>
   </div>
 </body>
 </html>

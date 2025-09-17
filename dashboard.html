@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - CyTutor</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <link rel="stylesheet" href="styles/app.css">
 </head>
 <body>
@@ -22,16 +25,16 @@
       </nav>
       <div class="header-right">
         <div class="user-menu">
-          <div class="user-profile-toggle">
-            <div class="user-avatar">JD</div>
-            <span class="user-name">John Doe</span>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <div class="dropdown-menu">
-            <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
-            <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
-            <a href="#" class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
-          </div>
+            <div class="user-profile-toggle">
+              <div class="user-avatar">JD</div>
+              <span class="user-name">John Doe</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="dropdown-menu">
+              <a href="profile.html"><i data-lucide="user"></i> Profile</a>
+              <a href="settings.html"><i data-lucide="settings"></i> Settings</a>
+              <a href="#" class="logout-btn" onclick="handleLogout()"><i data-lucide="log-out"></i> Logout</a>
+            </div>
         </div>
       </div>
     </div>
@@ -48,32 +51,32 @@
     <section class="container">
       <div class="domains-grid">
         <div class="domain-card">
-          <div class="domain-icon"><i class="fas fa-key"></i></div>
+          <div class="domain-icon"><i class="fas fa-lock"></i></div>
           <h3>Cryptography</h3>
           <p>Master encryption, hashing, and secure communication protocols.</p>
         </div>
         <div class="domain-card">
-          <div class="domain-icon"><i class="fas fa-file-alt"></i></div>
+          <div class="domain-icon"><i class="fas fa-search"></i></div>
           <h3>Forensics</h3>
           <p>Learn digital investigation and evidence analysis techniques.</p>
         </div>
         <div class="domain-card">
-          <div class="domain-icon"><i class="fas fa-bug"></i></div>
+          <div class="domain-icon"><i class="fas fa-virus"></i></div>
           <h3>Malware</h3>
           <p>Study malware analysis and reverse engineering.</p>
         </div>
         <div class="domain-card">
-          <div class="domain-icon"><i class="fas fa-code"></i></div>
+          <div class="domain-icon"><i class="fas fa-microchip"></i></div>
           <h3>Reverse Engineering</h3>
           <p>Decode and understand compiled programs and binaries.</p>
         </div>
         <div class="domain-card">
-          <div class="domain-icon"><i class="fas fa-globe"></i></div>
+          <div class="domain-icon"><i class="fas fa-globe-americas"></i></div>
           <h3>Web Security</h3>
           <p>Explore web vulnerabilities and secure coding practices.</p>
         </div>
         <div class="domain-card">
-          <div class="domain-icon"><i class="fas fa-shield-alt"></i></div>
+          <div class="domain-icon"><i class="fas fa-shield-virus"></i></div>
           <h3>VAPT</h3>
           <p>Learn vulnerability assessment and penetration testing.</p>
         </div>
@@ -125,6 +128,12 @@
   </main>
 
   <script src="scripts/main.js"></script>
+  <script>
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  </script>
 </div>
 </body>
 </html>

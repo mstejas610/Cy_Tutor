@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Settings - CyTutor</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/global.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <link rel="stylesheet" href="styles/app.css">
 </head>
 <body>
@@ -25,12 +27,12 @@
           <div class="user-profile-toggle">
             <div class="user-avatar">JD</div>
             <span class="user-name">John Doe</span>
-            <i class="fas fa-chevron-down"></i>
+            <i data-lucide="chevron-down"></i>
           </div>
           <div class="dropdown-menu">
-            <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
-            <a href="settings.html" class="active"><i class="fas fa-cog"></i> Settings</a>
-            <a href="#" class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="profile.html"><i data-lucide="user"></i> Profile</a>
+            <a href="settings.html" class="active"><i data-lucide="settings"></i> Settings</a>
+            <a href="#" class="logout-btn" onclick="handleLogout()"><i data-lucide="log-out"></i> Logout</a>
           </div>
         </div>
       </div>
@@ -39,11 +41,35 @@
 
   <main class="main-content-placeholder">
     <div class="container">
-        <h1>Settings</h1>
+        <h1>⚙️ Settings</h1>
+        <p>Customize your CyTutor experience</p>
+        <div style="margin-top: 2rem; padding: 2rem; background: rgba(26, 26, 26, 0.5); border-radius: 15px; border: 1px solid var(--border-color);">
+          <div style="display: grid; gap: 1.5rem;">
+            <div style="padding: 1rem; background: rgba(34, 197, 94, 0.1); border-radius: 10px; border: 1px solid rgba(34, 197, 94, 0.2);">
+              <h4 style="color: var(--primary); margin: 0 0 0.5rem 0;">🎨 Theme Settings</h4>
+              <p style="color: var(--text-muted); margin: 0;">Dark mode preferences and visual customization</p>
+            </div>
+            <div style="padding: 1rem; background: rgba(110, 64, 201, 0.1); border-radius: 10px; border: 1px solid rgba(110, 64, 201, 0.2);">
+              <h4 style="color: var(--secondary); margin: 0 0 0.5rem 0;">🔔 Notifications</h4>
+              <p style="color: var(--text-muted); margin: 0;">Challenge alerts and progress updates</p>
+            </div>
+            <div style="padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.2);">
+              <h4 style="color: var(--warning); margin: 0 0 0.5rem 0;">🔒 Privacy & Security</h4>
+              <p style="color: var(--text-muted); margin: 0;">Account security and privacy controls</p>
+            </div>
+          </div>
+          <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 2rem; text-align: center;">Full settings panel coming soon!</p>
+        </div>
     </div>
   </main>
 
   <script src="scripts/main.js"></script>
+  <script>
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  </script>
 </div>
 </body>
 </html>
