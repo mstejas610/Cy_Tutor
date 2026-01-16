@@ -119,20 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
         animate();
     }
 
-    const userProfileToggle = document.querySelector('.user-profile-toggle');
-    const dropdownMenu = document.querySelector('.dropdown-menu');
-
-    if (userProfileToggle && dropdownMenu) {
-        userProfileToggle.addEventListener('click', () => {
-            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!userProfileToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                dropdownMenu.style.display = 'none';
-            }
-        });
-    }
 });
 
 function handleLogout() {
