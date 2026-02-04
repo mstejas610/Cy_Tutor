@@ -1,159 +1,555 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - CyTutor</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/global.css">
-    <link rel="stylesheet" href="styles/app.css">
-</head>
-<body>
-    <canvas id="animated-bg"></canvas>
-    
-    <header>
-        <div class="container">
-            <div class="logo">
-                <h1>CyTutor</h1>
-                <div class="logo-glow"></div>
-            </div>
-            <nav>
-                <a href="index.html">← Back to Home</a>
-            </nav>
-        </div>
-    </header>
+    <title>Jack In - CyTutor</title>
+    <meta name="description"
+        content="Sign in to your CyTutor account and continue your cybersecurity training journey.">
+    <link rel="stylesheet" href="styles/cyber-enhanced.css">
+    <style>
+        /* ═══════════════════════════════════════════════════════════════
+       LOGIN PAGE — SECURE ACCESS TERMINAL
+       ═══════════════════════════════════════════════════════════════ */
+        .login-page {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            position: relative;
+        }
 
-    <div class="container">
-        <div class="form-container" style="margin-top: 8rem; max-width: 450px; padding: 3rem 2.5rem;">
-            <!-- CyTutor branding in Kaggle style -->
-            <div style="text-align: center; margin-bottom: 2.5rem;">
-                <h2 style="color: var(--primary); font-size: 1.8rem; font-weight: 600; margin: 0 0 0.5rem 0; letter-spacing: -0.01em;">cytutor</h2>
+        /* Left Panel — Form */
+        .login-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: var(--space-2xl);
+            position: relative;
+            z-index: 10;
+        }
+
+        .login-header {
+            margin-bottom: var(--space-2xl);
+        }
+
+        .login-logo {
+            font-family: var(--font-mono);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: var(--space-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .login-logo::before {
+            content: '>';
+            color: var(--neon-lime);
+            animation: logoBlink 1s step-end infinite;
+        }
+
+        .login-logo .cy {
+            color: var(--neon-cyan);
+            text-shadow: var(--glow-cyan);
+        }
+
+        .login-logo .tutor {
+            color: var(--neon-magenta);
+            text-shadow: var(--glow-magenta);
+        }
+
+        .login-title {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+        }
+
+        .login-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* Tab Switcher */
+        .auth-tabs {
+            display: flex;
+            background: var(--carbon);
+            border: 1px solid var(--border-default);
+            padding: 4px;
+            margin-bottom: var(--space-xl);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: var(--space-sm) var(--space-md);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            background: transparent;
+            color: var(--text-muted);
+        }
+
+        .auth-tab.active {
+            background: var(--neon-cyan);
+            color: var(--void);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+
+        .auth-tab:not(.active):hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        /* Form Elements */
+        .login-form {
+            max-width: 400px;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            background: var(--graphite);
+            border: 1px solid var(--border-default);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            transition: all var(--transition-base);
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 0 2px rgba(0, 245, 255, 0.15), var(--glow-cyan);
+            background: var(--slate);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-dim);
+            font-style: italic;
+        }
+
+        .form-help {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: var(--space-sm);
+        }
+
+        .form-help a {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--neon-cyan);
+            text-decoration: none;
+            transition: all var(--transition-fast);
+        }
+
+        .form-help a:hover {
+            text-shadow: var(--glow-cyan);
+        }
+
+        /* Submit Button */
+        .btn-login {
+            width: 100%;
+            padding: var(--space-md) var(--space-xl);
+            background: var(--neon-cyan);
+            color: var(--void);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-base);
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+            margin-top: var(--space-lg);
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .btn-login:hover {
+            box-shadow: var(--glow-cyan);
+            transform: translateY(-2px);
+        }
+
+        .btn-login:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Divider */
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            margin: var(--space-xl) 0;
+            gap: var(--space-md);
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-default), transparent);
+        }
+
+        .auth-divider span {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Signup Link */
+        .auth-footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .auth-footer a {
+            color: var(--neon-cyan);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: var(--space-xs);
+            transition: all var(--transition-fast);
+        }
+
+        .auth-footer a:hover {
+            text-shadow: var(--glow-cyan);
+        }
+
+        /* Right Panel — Visual */
+        .visual-panel {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .visual-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg,
+                    rgba(0, 245, 255, 0.05) 0%,
+                    rgba(255, 0, 170, 0.03) 50%,
+                    rgba(0, 245, 255, 0.02) 100%);
+        }
+
+        .visual-content {
+            position: relative;
+            z-index: 1;
+            padding: var(--space-2xl);
+            text-align: center;
+        }
+
+        .visual-terminal {
+            background: var(--abyss);
+            border: 1px solid var(--border-default);
+            width: 360px;
+            margin: 0 auto var(--space-2xl);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 245, 255, 0.1);
+        }
+
+        .visual-terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: var(--space-sm) var(--space-md);
+            background: var(--obsidian);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .visual-terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .visual-terminal-dot--red {
+            background: var(--danger);
+        }
+
+        .visual-terminal-dot--yellow {
+            background: var(--warning);
+        }
+
+        .visual-terminal-dot--green {
+            background: var(--success);
+        }
+
+        .visual-terminal-body {
+            padding: var(--space-lg);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-align: left;
+        }
+
+        .visual-terminal-line {
+            margin-bottom: var(--space-xs);
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .visual-terminal-prompt {
+            color: var(--neon-cyan);
+        }
+
+        .visual-terminal-cmd {
+            color: var(--text-primary);
+        }
+
+        .visual-terminal-output {
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .visual-terminal-output--success {
+            color: var(--success);
+        }
+
+        .visual-terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 14px;
+            background: var(--neon-cyan);
+            box-shadow: 0 0 10px var(--neon-cyan);
+            animation: cursorBlink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        .visual-quote {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 600;
+            font-style: italic;
+            color: var(--text-secondary);
+            max-width: 400px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .visual-quote span {
+            color: var(--neon-cyan);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .login-page {
+                grid-template-columns: 1fr;
+            }
+
+            .visual-panel {
+                display: none;
+            }
+
+            .login-panel {
+                padding: var(--space-xl);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-panel {
+                padding: var(--space-lg);
+            }
+
+            .login-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Atmospheric Layers -->
+    <div class="cyber-orbs"></div>
+    <div class="cyber-grid"></div>
+    <div class="cyber-scanlines"></div>
+    <div class="cyber-noise"></div>
+    <div class="cyber-vignette"></div>
+
+    <div class="login-page">
+        <!-- Left Panel — Login Form -->
+        <div class="login-panel">
+            <div class="login-header">
+                <a href="index.html" class="login-logo">
+                    <span class="cy">Cy</span><span class="tutor">Tutor</span>
+                </a>
+                <h1 class="login-title">Welcome Back</h1>
+                <p class="login-subtitle">Sign in to continue your cybersecurity journey</p>
             </div>
-            
-            <!-- Welcome section -->
-            <div style="text-align: center; margin-bottom: 2rem;">
-                <h1 class="form-title" style="font-size: 1.8rem; margin-bottom: 0.5rem;">Welcome!</h1>
-                <p style="color: var(--text-dim); font-size: 0.95rem; margin: 0;">Sign in to continue your cybersecurity journey</p>
+
+            <!-- Auth Tabs -->
+            <div class="auth-tabs">
+                <div class="auth-tab active">Sign In</div>
+                <a href="signup.html" class="auth-tab">Register</a>
             </div>
-            
-            <!-- Tab-style navigation -->
-            <div style="display: flex; margin-bottom: 2rem; background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 4px; border: 1px solid var(--border-color);">
-                <div style="flex: 1; padding: 12px 20px; background: var(--primary); color: var(--bg-dark); font-weight: 600; border-radius: 8px; text-align: center; font-size: 0.95rem; box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);">Sign In</div>
-                <a href="signup.html" style="flex: 1; padding: 12px 20px; color: var(--text-dim); font-weight: 500; border-radius: 8px; text-align: center; font-size: 0.95rem; text-decoration: none; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.background='rgba(255,255,255,0.08)'; this.style.color='var(--text)'" onmouseout="this.style.background='none'; this.style.color='var(--text-dim)'">Register</a>
-            </div>
-            
-            <form class="form" id="loginForm">
-                <div class="input-group" style="margin-bottom: 1.5rem;">
-                    <label for="userid" style="display: block; color: var(--text); font-weight: 500; margin-bottom: 8px; font-size: 0.95rem;">User ID</label>
-                    <input type="text" name="userid" id="userid" placeholder="Enter your username or email" 
-                           style="width: 100%; padding: 16px 20px; background: rgba(255, 255, 255, 0.08); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: var(--text); font-size: 1rem; transition: all 0.3s ease; font-family: inherit;" 
-                           onfocus="this.style.borderColor='var(--primary)'; this.style.background='rgba(255,255,255,0.12)'; this.style.boxShadow='0 0 0 4px rgba(34,197,94,0.1)'" 
-                           onblur="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.background='rgba(255,255,255,0.08)'; this.style.boxShadow='none'" required>
+
+            <!-- Login Form -->
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="userid">User ID</label>
+                    <input type="text" class="form-input" id="userid" name="userid"
+                        placeholder="Enter username or email" required>
                 </div>
-                
-                <div class="input-group" style="margin-bottom: 1rem;">
-                    <label for="password" style="display: block; color: var(--text); font-weight: 500; margin-bottom: 8px; font-size: 0.95rem;">Password</label>
-                    <input type="password" name="password" id="password" placeholder="Enter your password" 
-                           style="width: 100%; padding: 16px 20px; background: rgba(255, 255, 255, 0.08); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: var(--text); font-size: 1rem; transition: all 0.3s ease; font-family: inherit;" 
-                           onfocus="this.style.borderColor='var(--primary)'; this.style.background='rgba(255,255,255,0.12)'; this.style.boxShadow='0 0 0 4px rgba(34,197,94,0.1)'" 
-                           onblur="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.background='rgba(255,255,255,0.08)'; this.style.boxShadow='none'" required>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" class="form-input" id="password" name="password"
+                        placeholder="Enter your password" required>
+                    <div class="form-help">
+                        <a href="#" onclick="alert('Password reset coming soon!'); return false;">Forgot Password?</a>
+                    </div>
                 </div>
-                
-                <div style="text-align: right; margin-bottom: 1.5rem;">
-                    <a href="#" onclick="alert('Password reset feature coming soon!')" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Forgot Password?</a>
-                </div>
-                
-                <button type="submit" class="sign" style="width: 100%; padding: 16px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border: none; border-radius: 12px; color: var(--bg-dark); font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-top: 0.5rem; position: relative; overflow: hidden;" 
-                       onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(34,197,94,0.4)'" 
-                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">Sign In</button>
+
+                <button type="submit" class="btn-login" id="submitBtn">
+                    <span>Sign In</span>
+                </button>
             </form>
-            
-            <div style="margin: 2rem 0; position: relative; text-align: center;">
-                <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);"></div>
-                <span style="background: var(--bg-dark); color: var(--text-dim); padding: 0 1rem; font-size: 0.9rem; position: relative;">or</span>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+                <span>or</span>
             </div>
-            
-            <p class="signup" style="text-align: center; color: var(--text-dim); font-size: 0.95rem; margin: 0;">
+
+            <!-- Signup Link -->
+            <p class="auth-footer">
                 Don't have an account?
-                <a rel="noopener noreferrer" href="signup.html" style="color: var(--primary); text-decoration: none; font-weight: 600; margin-left: 0.3rem; transition: all 0.3s ease;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Create one</a>
+                <a href="signup.html">Create one</a>
             </p>
+        </div>
+
+        <!-- Right Panel — Visual -->
+        <div class="visual-panel">
+            <div class="visual-content">
+                <div class="visual-terminal">
+                    <div class="visual-terminal-header">
+                        <span class="visual-terminal-dot visual-terminal-dot--red"></span>
+                        <span class="visual-terminal-dot visual-terminal-dot--yellow"></span>
+                        <span class="visual-terminal-dot visual-terminal-dot--green"></span>
+                    </div>
+                    <div class="visual-terminal-body">
+                        <div class="visual-terminal-line">
+                            <span class="visual-terminal-prompt">$</span>
+                            <span class="visual-terminal-cmd">cytutor --auth</span>
+                        </div>
+                        <span class="visual-terminal-output">[*] Initializing secure connection...</span>
+                        <span class="visual-terminal-output">[*] Verifying credentials...</span>
+                        <span class="visual-terminal-output visual-terminal-output--success">[+] Access granted!</span>
+                        <div class="visual-terminal-line">
+                            <span class="visual-terminal-prompt">$</span>
+                            <span class="visual-terminal-cursor"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="visual-quote">
+                    "The best way to learn <span>security</span> is to break things and understand how they work."
+                </p>
+            </div>
         </div>
     </div>
 
-    <script src="scripts/main.js"></script>
     <script>
-        // Enhanced form handling with CyTutor animations
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // Enhanced form handling
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const userid = document.getElementById('userid').value.trim();
             const password = document.getElementById('password').value;
-            
+            const button = document.getElementById('submitBtn');
+
             if (userid && password) {
-                // Simulate login process with CyTutor styling
-                const button = document.querySelector('.sign');
-                const originalText = button.textContent;
-                
-                button.textContent = 'Signing In...';
+                const originalText = button.innerHTML;
+                button.innerHTML = '<span>Authenticating...</span>';
                 button.disabled = true;
-                button.style.background = 'linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%)';
-                
-                // Add loading animation
-                let dots = 0;
-                const loadingInterval = setInterval(() => {
-                    dots = (dots + 1) % 4;
-                    button.textContent = 'Signing In' + '.'.repeat(dots);
-                }, 500);
-                
+                button.style.background = 'linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta))';
+
+                // Simulate authentication
                 setTimeout(() => {
-                    clearInterval(loadingInterval);
-                    button.textContent = '✓ Success!';
+                    button.innerHTML = '<span>✓ Access Granted</span>';
                     button.style.background = 'var(--success)';
-                    
+
                     setTimeout(() => {
-                        // For demo purposes, redirect to dashboard
                         window.location.href = 'dashboard.html';
-                    }, 800);
-                }, 2000);
+                    }, 600);
+                }, 1500);
             } else {
-                // Show error with CyTutor styling
-                const container = document.querySelector('.form-container');
-                container.style.animation = 'shake 0.5s ease-in-out';
-                
-                setTimeout(() => {
-                    container.style.animation = '';
-                }, 500);
-                
+                // Shake animation for invalid input
+                const panel = document.querySelector('.login-panel');
+                panel.style.animation = 'shake 0.4s ease-in-out';
+                setTimeout(() => panel.style.animation = '', 400);
+
                 // Highlight empty fields
                 if (!userid) {
-                    document.getElementById('userid').style.borderColor = 'var(--error)';
+                    document.getElementById('userid').style.borderColor = 'var(--danger)';
                     document.getElementById('userid').focus();
                 }
                 if (!password) {
-                    document.getElementById('password').style.borderColor = 'var(--error)';
+                    document.getElementById('password').style.borderColor = 'var(--danger)';
                 }
             }
         });
-        
-        // Reset field border colors on input
-        document.getElementById('userid').addEventListener('input', function() {
-            this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+        // Reset border on input
+        ['userid', 'password'].forEach(id => {
+            document.getElementById(id).addEventListener('input', function () {
+                this.style.borderColor = 'var(--border-default)';
+            });
         });
-        
-        document.getElementById('password').addEventListener('input', function() {
-            this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-        });
-        
+
         // Add shake animation
         const style = document.createElement('style');
         style.textContent = `
-            @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                25% { transform: translateX(-5px); }
-                75% { transform: translateX(5px); }
-            }
-        `;
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-6px); }
+        40% { transform: translateX(6px); }
+        60% { transform: translateX(-4px); }
+        80% { transform: translateX(4px); }
+      }
+    `;
         document.head.appendChild(style);
     </script>
 </body>
+
 </html>
