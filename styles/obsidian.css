@@ -1,0 +1,952 @@
+/*
+ * CYTUTOR DESIGN SYSTEM
+ * "Obsidian Dossier" — Noir Editorial Aesthetic
+ * ═══════════════════════════════════════════════════════════════
+ * A sophisticated, intelligence-dossier inspired design that feels
+ * like classified documents meet high-end editorial print design.
+ * ═══════════════════════════════════════════════════════════════
+ */
+
+/* ═══════════════════════════════════════════════════════════════
+   TYPOGRAPHY IMPORTS
+   ═══════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
+
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  /* Core Palette — Obsidian Noir */
+  --ink-black: #0a0908;
+  --deep-char: #0f0e0c;
+  --carbon: #151412;
+  --graphite: #1c1a17;
+  --slate-warm: #252320;
+  --ash: #3a3632;
+
+  /* Warmth & Light */
+  --parchment: #f5f0e8;
+  --cream: #ebe5da;
+  --bone: #d9d2c5;
+  --sand: #c4bba8;
+
+  /* Accent — Vermillion Signal */
+  --vermillion: #e63946;
+  --coral-bright: #ff6b6b;
+  --ember: #d62828;
+  --rust: #9d0208;
+
+  /* Secondary Accent — Bronze */
+  --bronze: #b8860b;
+  --gold-muted: #c9a227;
+  --amber: #f4a261;
+
+  /* Semantic Colors */
+  --success: #2d6a4f;
+  --success-light: #40916c;
+  --warning: #e9c46a;
+  --danger: var(--vermillion);
+  --info: #457b9d;
+
+  /* Text Hierarchy */
+  --text-primary: var(--parchment);
+  --text-secondary: var(--bone);
+  --text-muted: var(--sand);
+  --text-dim: #6b6560;
+  --text-inverse: var(--ink-black);
+
+  /* Borders & Surfaces */
+  --border-subtle: rgba(245, 240, 232, 0.06);
+  --border-default: rgba(245, 240, 232, 0.12);
+  --border-strong: rgba(245, 240, 232, 0.25);
+  --border-accent: var(--vermillion);
+  --surface-glass: rgba(21, 20, 18, 0.85);
+  --surface-elevated: rgba(28, 26, 23, 0.95);
+
+  /* Typography */
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Crimson Pro', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* Spacing Scale */
+  --space-3xs: 2px;
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 20px;
+  --space-lg: 32px;
+  --space-xl: 48px;
+  --space-2xl: 72px;
+  --space-3xl: 108px;
+  --space-4xl: 160px;
+
+  /* Border Radius */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+
+  /* Effects */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 40px rgba(230, 57, 70, 0.15);
+  --glow-vermillion: 0 0 20px rgba(230, 57, 70, 0.3), 0 0 60px rgba(230, 57, 70, 0.1);
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-elegant: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--ink-black);
+  color: var(--text-primary);
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Selection Styling */
+::selection {
+  background: var(--vermillion);
+  color: var(--parchment);
+}
+
+::-moz-selection {
+  background: var(--vermillion);
+  color: var(--parchment);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ATMOSPHERIC LAYERS — PAPER TEXTURE & GRAIN
+   ═══════════════════════════════════════════════════════════════ */
+.obsidian-grain {
+  position: fixed;
+  inset: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 9998;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+.obsidian-vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, transparent 0%, var(--ink-black) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Subtle grid lines like document paper */
+.obsidian-rules {
+  position: fixed;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(245, 240, 232, 0.015) 1px, transparent 1px);
+  background-size: 100% 32px;
+  pointer-events: none;
+  z-index: -2;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HEADER / NAVIGATION — EDITORIAL MASTHEAD
+   ═══════════════════════════════════════════════════════════════ */
+.obsidian-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: var(--space-md) var(--space-xl);
+  background: linear-gradient(180deg, var(--ink-black) 0%, rgba(10, 9, 8, 0.95) 60%, transparent 100%);
+  backdrop-filter: blur(12px);
+}
+
+.obsidian-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* Logo — Editorial Wordmark */
+.obsidian-logo {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2xs);
+  text-decoration: none;
+  position: relative;
+}
+
+.obsidian-logo::before {
+  content: '◆';
+  font-size: 0.6rem;
+  color: var(--vermillion);
+  margin-right: var(--space-xs);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.obsidian-logo .wordmark {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--parchment);
+}
+
+.obsidian-logo .wordmark-accent {
+  color: var(--vermillion);
+  font-style: italic;
+}
+
+/* Navigation — Refined Links */
+.obsidian-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+}
+
+.obsidian-nav a {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: var(--space-xs) 0;
+  position: relative;
+  transition: color var(--transition-base);
+}
+
+.obsidian-nav a::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--vermillion);
+  transition: width var(--transition-elegant);
+}
+
+.obsidian-nav a:hover,
+.obsidian-nav a.active {
+  color: var(--parchment);
+}
+
+.obsidian-nav a:hover::before,
+.obsidian-nav a.active::before {
+  width: 100%;
+}
+
+/* Header CTA Button */
+.btn-obsidian-cta {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: var(--space-sm) var(--space-md);
+  background: transparent;
+  color: var(--vermillion);
+  border: 1px solid var(--vermillion);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.btn-obsidian-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--vermillion);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--transition-elegant);
+  z-index: -1;
+}
+
+.btn-obsidian-cta:hover {
+  color: var(--ink-black);
+}
+
+.btn-obsidian-cta:hover::before {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BUTTONS — REFINED TACTILE
+   ═══════════════════════════════════════════════════════════════ */
+.btn-obsidian {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.btn-obsidian-primary {
+  background: var(--vermillion);
+  color: var(--parchment);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-obsidian-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.btn-obsidian-primary:hover {
+  background: var(--ember);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-vermillion), var(--shadow-lg);
+}
+
+.btn-obsidian-primary:hover::after {
+  transform: translateX(100%);
+}
+
+.btn-obsidian-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+}
+
+.btn-obsidian-ghost:hover {
+  border-color: var(--text-secondary);
+  color: var(--parchment);
+  background: rgba(245, 240, 232, 0.03);
+}
+
+.btn-obsidian-outline {
+  background: transparent;
+  color: var(--vermillion);
+  border: 1px solid var(--vermillion);
+}
+
+.btn-obsidian-outline:hover {
+  background: var(--vermillion);
+  color: var(--ink-black);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CARDS — DOSSIER STYLE
+   ═══════════════════════════════════════════════════════════════ */
+.obsidian-card {
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  padding: var(--space-lg);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-elegant);
+}
+
+/* Top-left corner classification marker */
+.obsidian-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--vermillion) 50%, transparent 50%);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+/* Bottom rule */
+.obsidian-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: var(--space-lg);
+  right: var(--space-lg);
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--border-default) 50%, transparent 100%);
+}
+
+.obsidian-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.obsidian-card:hover::before {
+  opacity: 1;
+}
+
+/* Card Variants */
+.obsidian-card--accent::before {
+  opacity: 1;
+}
+
+.obsidian-card--bronze::before {
+  background: linear-gradient(135deg, var(--bronze) 50%, transparent 50%);
+  opacity: 1;
+}
+
+.obsidian-card--success::before {
+  background: linear-gradient(135deg, var(--success) 50%, transparent 50%);
+  opacity: 1;
+}
+
+/* Card Content Elements */
+.obsidian-card-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--vermillion);
+  margin-bottom: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.obsidian-card-tag::before {
+  content: '//';
+  color: var(--text-dim);
+}
+
+.obsidian-card-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--parchment);
+  margin-bottom: var(--space-sm);
+  line-height: 1.3;
+}
+
+.obsidian-card-desc {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.obsidian-card-meta {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION TYPOGRAPHY — EDITORIAL HIERARCHY
+   ═══════════════════════════════════════════════════════════════ */
+.obsidian-section {
+  padding: var(--space-3xl) var(--space-xl);
+  position: relative;
+}
+
+.obsidian-section-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--vermillion);
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  margin-bottom: var(--space-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.obsidian-section-tag::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--vermillion);
+}
+
+.obsidian-section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--parchment);
+  margin-bottom: var(--space-lg);
+}
+
+.obsidian-section-title em {
+  font-style: italic;
+  color: var(--vermillion);
+}
+
+.obsidian-section-title .outline {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FORM ELEMENTS — REFINED INPUTS
+   ═══════════════════════════════════════════════════════════════ */
+.obsidian-input-group {
+  margin-bottom: var(--space-lg);
+}
+
+.obsidian-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.obsidian-input {
+  width: 100%;
+  padding: var(--space-md);
+  background: var(--graphite);
+  border: 1px solid var(--border-default);
+  color: var(--parchment);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  transition: all var(--transition-base);
+  border-radius: var(--radius-sm);
+}
+
+.obsidian-input:focus {
+  outline: none;
+  border-color: var(--vermillion);
+  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+  background: var(--slate-warm);
+}
+
+.obsidian-input::placeholder {
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BADGES — CLASSIFICATION MARKERS
+   ═══════════════════════════════════════════════════════════════ */
+.obsidian-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: var(--space-2xs) var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border: 1px solid;
+}
+
+.obsidian-badge--easy {
+  color: var(--success-light);
+  border-color: var(--success-light);
+  background: rgba(45, 106, 79, 0.15);
+}
+
+.obsidian-badge--medium {
+  color: var(--warning);
+  border-color: var(--warning);
+  background: rgba(233, 196, 106, 0.1);
+}
+
+.obsidian-badge--hard {
+  color: var(--vermillion);
+  border-color: var(--vermillion);
+  background: rgba(230, 57, 70, 0.1);
+}
+
+.obsidian-badge--classified {
+  color: var(--rust);
+  border-color: var(--rust);
+  background: rgba(157, 2, 8, 0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROGRESS — INK FILL STYLE
+   ═══════════════════════════════════════════════════════════════ */
+.obsidian-progress {
+  height: 4px;
+  background: var(--graphite);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  position: relative;
+}
+
+.obsidian-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--vermillion) 0%, var(--coral-bright) 100%);
+  position: relative;
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.obsidian-progress-fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--parchment);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--vermillion);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   STATS — DATA DISPLAY
+   ═══════════════════════════════════════════════════════════════ */
+.obsidian-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-lg);
+}
+
+.obsidian-stat {
+  padding: var(--space-lg);
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--vermillion);
+}
+
+.obsidian-stat-value {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--parchment);
+  line-height: 1;
+  margin-bottom: var(--space-xs);
+}
+
+.obsidian-stat-value .suffix {
+  font-size: 1.4rem;
+  color: var(--vermillion);
+}
+
+.obsidian-stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TERMINAL — CLASSIFIED COMMAND LINE
+   ═══════════════════════════════════════════════════════════════ */
+.obsidian-terminal {
+  background: var(--deep-char);
+  border: 1px solid var(--border-default);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  overflow: hidden;
+}
+
+.obsidian-terminal-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--carbon);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.obsidian-terminal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.obsidian-terminal-dot--close { background: var(--vermillion); }
+.obsidian-terminal-dot--minimize { background: var(--warning); }
+.obsidian-terminal-dot--maximize { background: var(--success); }
+
+.obsidian-terminal-title {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.obsidian-terminal-body {
+  padding: var(--space-md);
+  min-height: 140px;
+}
+
+.obsidian-terminal-line {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.obsidian-terminal-prompt {
+  color: var(--vermillion);
+  font-weight: 600;
+}
+
+.obsidian-terminal-cmd {
+  color: var(--parchment);
+}
+
+.obsidian-terminal-output {
+  color: var(--text-muted);
+  padding-left: var(--space-md);
+}
+
+.obsidian-terminal-output--success {
+  color: var(--success-light);
+}
+
+.obsidian-terminal-output--error {
+  color: var(--vermillion);
+}
+
+.obsidian-terminal-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  background: var(--vermillion);
+  animation: cursor-blink 1s step-end infinite;
+  vertical-align: middle;
+}
+
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACTIVITY FEED — DOSSIER ENTRIES
+   ═══════════════════════════════════════════════════════════════ */
+.obsidian-activity-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md);
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid transparent;
+  margin-bottom: var(--space-sm);
+  transition: all var(--transition-base);
+}
+
+.obsidian-activity-item:hover {
+  border-left-color: var(--vermillion);
+  background: var(--surface-elevated);
+  transform: translateX(8px);
+}
+
+.obsidian-activity-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.obsidian-activity-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+}
+
+.obsidian-activity-icon--success {
+  color: var(--success-light);
+  background: rgba(45, 106, 79, 0.2);
+}
+
+.obsidian-activity-icon--danger {
+  color: var(--vermillion);
+  background: rgba(230, 57, 70, 0.15);
+}
+
+.obsidian-activity-icon--warning {
+  color: var(--warning);
+  background: rgba(233, 196, 106, 0.15);
+}
+
+.obsidian-activity-title {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.obsidian-activity-meta {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--success-light);
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GRID LAYOUTS
+   ═══════════════════════════════════════════════════════════════ */
+.obsidian-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-lg);
+}
+
+.obsidian-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+
+.obsidian-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+}
+
+.obsidian-grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-lg);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.animate-fade-up {
+  animation: fadeInUp 0.8s var(--transition-elegant) forwards;
+  opacity: 0;
+}
+
+.animate-delay-1 { animation-delay: 0.1s; }
+.animate-delay-2 { animation-delay: 0.2s; }
+.animate-delay-3 { animation-delay: 0.3s; }
+.animate-delay-4 { animation-delay: 0.4s; }
+.animate-delay-5 { animation-delay: 0.5s; }
+.animate-delay-6 { animation-delay: 0.6s; }
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+.container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+}
+
+.text-vermillion { color: var(--vermillion); }
+.text-parchment { color: var(--parchment); }
+.text-muted { color: var(--text-muted); }
+
+.font-display { font-family: var(--font-display); }
+.font-mono { font-family: var(--font-mono); }
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  :root {
+    font-size: 16px;
+  }
+  
+  .obsidian-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .obsidian-grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .obsidian-header { padding: var(--space-md); }
+  .obsidian-nav { display: none; }
+  .obsidian-grid-4, 
+  .obsidian-grid-3, 
+  .obsidian-grid-2 { grid-template-columns: 1fr; }
+  .obsidian-section { padding: var(--space-2xl) var(--space-md); }
+  
+  .obsidian-section-title {
+    font-size: 2rem;
+  }
+  
+  .obsidian-stat-value {
+    font-size: 2.2rem;
+  }
+}

@@ -1,245 +1,678 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Challenges - CyTutor</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/global.css">
-  <link rel="stylesheet" href="styles/challenges.css">
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <link rel="stylesheet" href="styles/app.css">
-</head>
-<body>
-  <div class="page-wrapper">
-  <canvas id="particles-bg"></canvas>
+  <meta name="description"
+    content="Browse and solve cybersecurity challenges. From beginner to expert, test your skills across multiple domains.">
+  <link rel="stylesheet" href="styles/cyber-enhanced.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       CHALLENGES PAGE
+       ═══════════════════════════════════════════════════════════════ */
+    .challenges-page {
+      padding-top: 120px;
+      min-height: 100vh;
+    }
 
-  <header>
+    /* Page Header */
+    .page-header {
+      text-align: center;
+      padding: var(--space-xl) var(--space-xl) var(--space-2xl);
+      position: relative;
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(0, 245, 255, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: var(--space-md);
+      position: relative;
+    }
+
+    .page-title .highlight {
+      color: var(--neon-cyan);
+      text-shadow: var(--glow-cyan);
+    }
+
+    .page-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Filters */
+    .filters-bar {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-md);
+      padding: var(--space-lg) var(--space-xl);
+      margin-bottom: var(--space-xl);
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: var(--space-sm) var(--space-lg);
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border-default);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+
+    .filter-btn:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .filter-btn.active {
+      background: var(--neon-cyan);
+      color: var(--void);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+    }
+
+    /* Challenges Grid */
+    .challenges-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 var(--space-xl) var(--space-2xl);
+    }
+
+    .challenges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    /* Challenge Card — 3D Flip */
+    .challenge-card {
+      perspective: 1000px;
+      height: 280px;
+    }
+
+    .challenge-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .challenge-card:hover .challenge-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .challenge-front,
+    .challenge-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    /* Front Face */
+    .challenge-front {
+      background: var(--surface-glass);
+      border: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-lg);
+      position: relative;
+      overflow: hidden;
+      clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+    }
+
+    .challenge-front::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--neon-cyan);
+    }
+
+    .challenge-front::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, transparent 50%, var(--neon-cyan) 50%);
+    }
+
+    /* Accent colors for different cards */
+    .challenge-card:nth-child(2) .challenge-front::before,
+    .challenge-card:nth-child(2) .challenge-front::after,
+    .challenge-card:nth-child(2) .challenge-back {
+      background: var(--neon-magenta);
+    }
+
+    .challenge-card:nth-child(2) .challenge-front::after {
+      background: linear-gradient(135deg, transparent 50%, var(--neon-magenta) 50%);
+    }
+
+    .challenge-card:nth-child(3) .challenge-front::before,
+    .challenge-card:nth-child(3) .challenge-front::after {
+      background: var(--danger);
+    }
+
+    .challenge-card:nth-child(3) .challenge-front::after {
+      background: linear-gradient(135deg, transparent 50%, var(--danger) 50%);
+    }
+
+    .challenge-card:nth-child(4) .challenge-front::before,
+    .challenge-card:nth-child(4) .challenge-front::after {
+      background: var(--neon-lime);
+    }
+
+    .challenge-card:nth-child(4) .challenge-front::after {
+      background: linear-gradient(135deg, transparent 50%, var(--neon-lime) 50%);
+    }
+
+    .challenge-card:nth-child(5) .challenge-front::before,
+    .challenge-card:nth-child(5) .challenge-front::after {
+      background: var(--electric-blue);
+    }
+
+    .challenge-card:nth-child(5) .challenge-front::after {
+      background: linear-gradient(135deg, transparent 50%, var(--electric-blue) 50%);
+    }
+
+    .challenge-card:nth-child(6) .challenge-front::before,
+    .challenge-card:nth-child(6) .challenge-front::after {
+      background: var(--plasma-purple);
+    }
+
+    .challenge-card:nth-child(6) .challenge-front::after {
+      background: linear-gradient(135deg, transparent 50%, var(--plasma-purple) 50%);
+    }
+
+    /* Decorative circles */
+    .challenge-circles {
+      position: absolute;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      display: flex;
+      gap: calc(var(--space-xs) * -1);
+    }
+
+    .challenge-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 1px solid var(--border-default);
+      opacity: 0.15;
+    }
+
+    .challenge-circle:nth-child(1) {
+      background: radial-gradient(circle, var(--neon-cyan) 0%, transparent 70%);
+    }
+
+    .challenge-circle:nth-child(2) {
+      margin-left: -20px;
+      background: radial-gradient(circle, var(--neon-magenta) 0%, transparent 70%);
+    }
+
+    .challenge-circle:nth-child(3) {
+      margin-left: -20px;
+      background: radial-gradient(circle, var(--neon-lime) 0%, transparent 70%);
+    }
+
+    .challenge-badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      margin-bottom: var(--space-md);
+    }
+
+    .challenge-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: var(--space-sm);
+      color: var(--text-primary);
+    }
+
+    .challenge-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      flex-grow: 1;
+    }
+
+    /* Back Face */
+    .challenge-back {
+      background: var(--neon-cyan);
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-lg);
+      clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%, 0 20px);
+    }
+
+    .challenge-card:nth-child(2) .challenge-back {
+      background: var(--neon-magenta);
+    }
+
+    .challenge-card:nth-child(3) .challenge-back {
+      background: var(--danger);
+    }
+
+    .challenge-card:nth-child(4) .challenge-back {
+      background: var(--neon-lime);
+    }
+
+    .challenge-card:nth-child(5) .challenge-back {
+      background: var(--electric-blue);
+    }
+
+    .challenge-card:nth-child(6) .challenge-back {
+      background: var(--plasma-purple);
+    }
+
+    .difficulty-badge {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: var(--space-sm) var(--space-lg);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--void);
+    }
+
+    .difficulty-badge.easy {
+      background: var(--success);
+    }
+
+    .difficulty-badge.medium {
+      background: var(--warning);
+    }
+
+    .difficulty-badge.hard {
+      background: var(--danger);
+    }
+
+    .btn-start {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: var(--space-md) var(--space-2xl);
+      background: var(--void);
+      color: var(--text-primary);
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+
+    .btn-start:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Points Display */
+    .challenge-points {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: rgba(0, 0, 0, 0.6);
+      font-weight: 600;
+    }
+
+    /* User Menu */
+    .user-menu {
+      position: relative;
+    }
+
+    .user-profile-toggle {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-xs) var(--space-md);
+      background: var(--surface-glass);
+      border: 1px solid var(--border-subtle);
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+
+    .user-profile-toggle:hover {
+      border-color: var(--neon-magenta);
+      box-shadow: 0 0 20px rgba(255, 0, 170, 0.15);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--void);
+    }
+
+    .user-name {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: var(--space-sm);
+      background: var(--surface-panel);
+      border: 1px solid var(--border-default);
+      min-width: 200px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 1001;
+    }
+
+    .dropdown-menu a {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all var(--transition-fast);
+    }
+
+    .dropdown-menu a:hover {
+      background: rgba(0, 245, 255, 0.08);
+      color: var(--neon-cyan);
+    }
+
+    .user-menu:hover .dropdown-menu {
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .challenges-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filters-bar {
+        gap: var(--space-sm);
+      }
+
+      .filter-btn {
+        padding: var(--space-xs) var(--space-md);
+        font-size: 0.65rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Atmospheric Layers -->
+  <div class="cyber-orbs"></div>
+  <div class="cyber-grid"></div>
+  <div class="cyber-scanlines"></div>
+  <div class="cyber-noise"></div>
+  <div class="cyber-vignette"></div>
+
+  <!-- Header -->
+  <header class="cyber-header">
     <div class="container">
-      <h1><a href="dashboard.html">CyTutor</a></h1>
-      <nav>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="challenges.html" class="active">Challenges</a>
-        <a href="domains.html">Learning Paths</a>
-        <a href="leaderboard.html">Leaderboard</a>
+      <a href="index.html" class="cyber-logo">
+        <span class="cy">Cy</span><span class="tutor">Tutor</span>
+      </a>
+      <nav class="cyber-nav">
+        <a href="dashboard.html">Dashboard<span class="nav-line"></span></a>
+        <a href="challenges.html" class="active">Challenges<span class="nav-line"></span></a>
+        <a href="domains.html">Learning Paths<span class="nav-line"></span></a>
+        <a href="leaderboard.html">Leaderboard<span class="nav-line"></span></a>
       </nav>
-      <div class="header-right">
-        <div class="user-menu">
-          <div class="user-profile-toggle">
-            <div class="user-avatar">JD</div>
-            <span class="user-name">John Doe</span>
-            <i data-lucide="chevron-down"></i>
-          </div>
-          <div class="dropdown-menu">
-            <a href="profile.html"><i data-lucide="user"></i> Profile</a>
-            <a href="settings.html"><i data-lucide="settings"></i> Settings</a>
-            <a href="#" class="logout-btn" onclick="handleLogout()"><i data-lucide="log-out"></i> Logout</a>
-          </div>
+      <div class="user-menu">
+        <div class="user-profile-toggle">
+          <div class="user-avatar">JD</div>
+          <span class="user-name">John Doe</span>
+          <i class="fas fa-chevron-down" style="font-size: 0.6rem; color: var(--text-dim);"></i>
+        </div>
+        <div class="dropdown-menu">
+          <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
+          <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+          <a href="index.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
       </div>
     </div>
   </header>
 
-  <main class="main-content">
-    <h1 class="section-title">Challenges</h1>
-    
-    <div class="challenges-grid">
-      <div class="card">
-        <div class="content">
-          <div class="back">
-            <div class="back-content">
-              <span class="difficulty easy">Easy</span>
-              <a href="#" class="start-btn">START</a>
-            </div>
-          </div>
-          <div class="front">
-            <div class="img">
-              <div class="circle"></div>
-              <div class="circle" id="right"></div>
-              <div class="circle" id="bottom"></div>
-            </div>
-            <div class="front-content">
-              <small class="badge">Challenge 1</small>
-              <div class="description">
-                <div class="title">
-                  <p class="title">
-                    <strong>Challenge 1</strong>
-                  </p>
-                </div>
-                <p class="card-footer">
-                  Begin your cybersecurity journey with this introductory challenge.
-                </p>
+  <main class="challenges-page">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">
+        <span class="highlight">Challenges</span>
+      </h1>
+      <p class="page-subtitle">
+        Test your skills across multiple security domains. From beginner-friendly to expert-level,
+        find the perfect challenge for your skill level.
+      </p>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar">
+      <button class="filter-btn active">All</button>
+      <button class="filter-btn">Easy</button>
+      <button class="filter-btn">Medium</button>
+      <button class="filter-btn">Hard</button>
+      <button class="filter-btn">Web</button>
+      <button class="filter-btn">Crypto</button>
+      <button class="filter-btn">Forensics</button>
+      <button class="filter-btn">Pwn</button>
+    </div>
+
+    <!-- Challenges Grid -->
+    <div class="challenges-container">
+      <div class="challenges-grid">
+
+        <!-- Challenge 1 -->
+        <div class="challenge-card">
+          <div class="challenge-card-inner">
+            <div class="challenge-front">
+              <span class="challenge-badge">Challenge 01</span>
+              <h3 class="challenge-title">SQL Injection 101</h3>
+              <p class="challenge-desc">
+                Begin your cybersecurity journey by exploiting a vulnerable login form using basic SQL injection
+                techniques.
+              </p>
+              <div class="challenge-circles">
+                <div class="challenge-circle"></div>
+                <div class="challenge-circle"></div>
+                <div class="challenge-circle"></div>
               </div>
+            </div>
+            <div class="challenge-back">
+              <span class="difficulty-badge easy">Easy</span>
+              <a href="#" class="btn-start">Start Challenge</a>
+              <span class="challenge-points">+100 XP</span>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="content">
-          <div class="back">
-            <div class="back-content">
-              <span class="difficulty medium">Medium</span>
-              <a href="#" class="start-btn">START</a>
-            </div>
-          </div>
-          <div class="front">
-            <div class="img">
-              <div class="circle"></div>
-              <div class="circle" id="right"></div>
-              <div class="circle" id="bottom"></div>
-            </div>
-            <div class="front-content">
-              <small class="badge">Challenge 2</small>
-              <div class="description">
-                <div class="title">
-                  <p class="title">
-                    <strong>Challenge 2</strong>
-                  </p>
-                </div>
-                <p class="card-footer">
-                  Test your skills with this intermediate-level challenge.
-                </p>
+        <!-- Challenge 2 -->
+        <div class="challenge-card">
+          <div class="challenge-card-inner">
+            <div class="challenge-front">
+              <span class="challenge-badge">Challenge 02</span>
+              <h3 class="challenge-title">XSS Playground</h3>
+              <p class="challenge-desc">
+                Discover and exploit cross-site scripting vulnerabilities in a simulated web application.
+              </p>
+              <div class="challenge-circles">
+                <div class="challenge-circle"></div>
+                <div class="challenge-circle"></div>
+                <div class="challenge-circle"></div>
               </div>
+            </div>
+            <div class="challenge-back">
+              <span class="difficulty-badge medium">Medium</span>
+              <a href="#" class="btn-start">Start Challenge</a>
+              <span class="challenge-points">+200 XP</span>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="content">
-          <div class="back">
-            <div class="back-content">
-              <span class="difficulty hard">Hard</span>
-              <a href="#" class="start-btn">START</a>
-            </div>
-          </div>
-          <div class="front">
-            <div class="img">
-              <div class="circle"></div>
-              <div class="circle" id="right"></div>
-              <div class="circle" id="bottom"></div>
-            </div>
-            <div class="front-content">
-              <small class="badge">Challenge 3</small>
-              <div class="description">
-                <div class="title">
-                  <p class="title">
-                    <strong>Challenge 3</strong>
-                  </p>
-                </div>
-                <p class="card-footer">
-                  Push your limits with this advanced cybersecurity challenge.
-                </p>
+        <!-- Challenge 3 -->
+        <div class="challenge-card">
+          <div class="challenge-card-inner">
+            <div class="challenge-front">
+              <span class="challenge-badge">Challenge 03</span>
+              <h3 class="challenge-title">Buffer Overflow</h3>
+              <p class="challenge-desc">
+                Push your limits with this advanced binary exploitation challenge. Overflow the buffer and take control.
+              </p>
+              <div class="challenge-circles">
+                <div class="challenge-circle"></div>
+                <div class="challenge-circle"></div>
+                <div class="challenge-circle"></div>
               </div>
+            </div>
+            <div class="challenge-back">
+              <span class="difficulty-badge hard">Hard</span>
+              <a href="#" class="btn-start">Start Challenge</a>
+              <span class="challenge-points">+350 XP</span>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="content">
-          <div class="back">
-            <div class="back-content">
-              <span class="difficulty easy">Easy</span>
-              <a href="#" class="start-btn">START</a>
-            </div>
-          </div>
-          <div class="front">
-            <div class="img">
-              <div class="circle"></div>
-              <div class="circle" id="right"></div>
-              <div class="circle" id="bottom"></div>
-            </div>
-            <div class="front-content">
-              <small class="badge">Challenge 4</small>
-              <div class="description">
-                <div class="title">
-                  <p class="title">
-                    <strong>Challenge 4</strong>
-                  </p>
-                </div>
-                <p class="card-footer">
-                  Another beginner-friendly challenge to build your foundation.
-                </p>
+        <!-- Challenge 4 -->
+        <div class="challenge-card">
+          <div class="challenge-card-inner">
+            <div class="challenge-front">
+              <span class="challenge-badge">Challenge 04</span>
+              <h3 class="challenge-title">Hash Cracker</h3>
+              <p class="challenge-desc">
+                Learn about password security by cracking various hash types using different techniques.
+              </p>
+              <div class="challenge-circles">
+                <div class="challenge-circle"></div>
+                <div class="challenge-circle"></div>
+                <div class="challenge-circle"></div>
               </div>
+            </div>
+            <div class="challenge-back">
+              <span class="difficulty-badge easy">Easy</span>
+              <a href="#" class="btn-start">Start Challenge</a>
+              <span class="challenge-points">+100 XP</span>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="content">
-          <div class="back">
-            <div class="back-content">
-              <span class="difficulty medium">Medium</span>
-              <a href="#" class="start-btn">START</a>
-            </div>
-          </div>
-          <div class="front">
-            <div class="img">
-              <div class="circle"></div>
-              <div class="circle" id="right"></div>
-              <div class="circle" id="bottom"></div>
-            </div>
-            <div class="front-content">
-              <small class="badge">Challenge 5</small>
-              <div class="description">
-                <div class="title">
-                  <p class="title">
-                    <strong>Challenge 5</strong>
-                  </p>
-                </div>
-                <p class="card-footer">
-                  Dive deeper into cybersecurity concepts with this challenge.
-                </p>
+        <!-- Challenge 5 -->
+        <div class="challenge-card">
+          <div class="challenge-card-inner">
+            <div class="challenge-front">
+              <span class="challenge-badge">Challenge 05</span>
+              <h3 class="challenge-title">Network Forensics</h3>
+              <p class="challenge-desc">
+                Analyze network traffic captures to identify malicious activity and extract hidden data.
+              </p>
+              <div class="challenge-circles">
+                <div class="challenge-circle"></div>
+                <div class="challenge-circle"></div>
+                <div class="challenge-circle"></div>
               </div>
+            </div>
+            <div class="challenge-back">
+              <span class="difficulty-badge medium">Medium</span>
+              <a href="#" class="btn-start">Start Challenge</a>
+              <span class="challenge-points">+200 XP</span>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="content">
-          <div class="back">
-            <div class="back-content">
-              <span class="difficulty hard">Hard</span>
-              <a href="#" class="start-btn">START</a>
-            </div>
-          </div>
-          <div class="front">
-            <div class="img">
-              <div class="circle"></div>
-              <div class="circle" id="right"></div>
-              <div class="circle" id="bottom"></div>
-            </div>
-            <div class="front-content">
-              <small class="badge">Challenge 6</small>
-              <div class="description">
-                <div class="title">
-                  <p class="title">
-                    <strong>Challenge 6</strong>
-                  </p>
-                </div>
-                <p class="card-footer">
-                  Test your expertise with this complex security scenario.
-                </p>
+        <!-- Challenge 6 -->
+        <div class="challenge-card">
+          <div class="challenge-card-inner">
+            <div class="challenge-front">
+              <span class="challenge-badge">Challenge 06</span>
+              <h3 class="challenge-title">RSA Attack</h3>
+              <p class="challenge-desc">
+                Test your expertise with this complex cryptographic scenario exploiting weak RSA parameters.
+              </p>
+              <div class="challenge-circles">
+                <div class="challenge-circle"></div>
+                <div class="challenge-circle"></div>
+                <div class="challenge-circle"></div>
               </div>
+            </div>
+            <div class="challenge-back">
+              <span class="difficulty-badge hard">Hard</span>
+              <a href="#" class="btn-start">Start Challenge</a>
+              <span class="challenge-points">+350 XP</span>
             </div>
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
   </main>
 
-  <script src="scripts/main.js"></script>
   <script>
-    // Initialize Lucide icons
-    if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
-    }
+    // Filter button functionality
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Staggered card animation on load
+    document.querySelectorAll('.challenge-card').forEach((card, i) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(40px)';
+      setTimeout(() => {
+        card.style.transition = 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, 100 + i * 100);
+    });
   </script>
-  </div>
 </body>
+
 </html>
