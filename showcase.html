@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyTutor // BREACH THE LIMITS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cyber-black: #0a0a0c;
+      --cyber-dark: #12121a;
+      --cyber-mid: #1a1a2e;
+      --neon-cyan: #00fff2;
+      --neon-magenta: #ff00aa;
+      --neon-yellow: #f0ff00;
+      --electric-blue: #4d7cff;
+      --ghost-white: #e8e8f0;
+      --dim-text: #6a6a8a;
+      --danger-red: #ff3355;
+      --success-green: #00ff88;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--cyber-black);
+      color: var(--ghost-white);
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* SCANLINE OVERLAY */
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.15) 2px,
+        rgba(0, 0, 0, 0.15) 4px
+      );
+    }
+
+    /* NOISE TEXTURE */
+    .noise {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    /* GRID BACKGROUND */
+    .grid-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        linear-gradient(rgba(0, 255, 242, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 242, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: -1;
+    }
+
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(180deg, var(--cyber-black) 0%, transparent 100%);
+    }
+
+    .logo {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -1px;
+      position: relative;
+    }
+
+    .logo span:first-child {
+      color: var(--neon-cyan);
+      text-shadow: 0 0 20px var(--neon-cyan);
+    }
+
+    .logo span:last-child {
+      color: var(--neon-magenta);
+      text-shadow: 0 0 20px var(--neon-magenta);
+    }
+
+    .logo::before {
+      content: '>';
+      color: var(--neon-yellow);
+      margin-right: 8px;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    nav {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+    }
+
+    nav a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--dim-text);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--neon-cyan);
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px var(--neon-cyan);
+    }
+
+    nav a:hover {
+      color: var(--neon-cyan);
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      padding: 12px 24px;
+      background: transparent;
+      border: 1px solid var(--neon-magenta);
+      color: var(--neon-magenta) !important;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .nav-cta:hover {
+      background: var(--neon-magenta);
+      color: var(--cyber-black) !important;
+      box-shadow: 0 0 30px var(--neon-magenta);
+    }
+
+    .nav-cta::after {
+      display: none;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      padding: 120px 60px 60px;
+      position: relative;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--neon-yellow);
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-tag::before {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--neon-yellow);
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 900;
+      line-height: 0.95;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+    }
+
+    .hero-title .line {
+      display: block;
+      overflow: hidden;
+    }
+
+    .hero-title .line span {
+      display: inline-block;
+      animation: slideUp 0.8s ease forwards;
+      opacity: 0;
+      transform: translateY(100%);
+    }
+
+    .hero-title .line:nth-child(1) span { animation-delay: 0.2s; }
+    .hero-title .line:nth-child(2) span { animation-delay: 0.4s; }
+    .hero-title .line:nth-child(3) span { animation-delay: 0.6s; }
+
+    @keyframes slideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-title .highlight {
+      color: transparent;
+      -webkit-text-stroke: 2px var(--neon-cyan);
+      position: relative;
+    }
+
+    .hero-title .highlight::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--neon-cyan);
+      clip-path: inset(0 100% 0 0);
+      animation: glitchReveal 2s ease 1s forwards;
+    }
+
+    @keyframes glitchReveal {
+      0% { clip-path: inset(0 100% 0 0); }
+      100% { clip-path: inset(0 0 0 0); }
+    }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      color: var(--dim-text);
+      max-width: 500px;
+      line-height: 1.8;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease 0.8s forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 20px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease 1s forwards;
+    }
+
+    .btn-primary {
+      padding: 18px 40px;
+      background: var(--neon-cyan);
+      color: var(--cyber-black);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 40px var(--neon-cyan);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .btn-ghost {
+      padding: 18px 40px;
+      background: transparent;
+      color: var(--ghost-white);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-decoration: none;
+      border: 1px solid var(--dim-text);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--ghost-white);
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* HERO VISUAL */
+    .hero-visual {
+      position: relative;
+      height: 600px;
+    }
+
+    .terminal-float {
+      position: absolute;
+      background: var(--cyber-dark);
+      border: 1px solid var(--cyber-mid);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      padding: 20px;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(1deg); }
+    }
+
+    .terminal-1 {
+      top: 10%;
+      right: 10%;
+      width: 320px;
+      animation-delay: 0s;
+    }
+
+    .terminal-2 {
+      top: 45%;
+      right: 25%;
+      width: 280px;
+      animation-delay: -2s;
+    }
+
+    .terminal-3 {
+      bottom: 10%;
+      right: 5%;
+      width: 300px;
+      animation-delay: -4s;
+    }
+
+    .terminal-header {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--cyber-mid);
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .terminal-dot.red { background: var(--danger-red); }
+    .terminal-dot.yellow { background: var(--neon-yellow); }
+    .terminal-dot.green { background: var(--success-green); }
+
+    .terminal-line {
+      margin-bottom: 8px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .prompt {
+      color: var(--neon-cyan);
+    }
+
+    .command {
+      color: var(--ghost-white);
+    }
+
+    .output {
+      color: var(--dim-text);
+      display: block;
+      padding-left: 0;
+    }
+
+    .output.success {
+      color: var(--success-green);
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: var(--neon-cyan);
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
+
+    /* GLITCH DECORATION */
+    .glitch-box {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border: 1px solid var(--neon-magenta);
+      opacity: 0.3;
+      animation: glitchBox 4s ease-in-out infinite;
+    }
+
+    .glitch-box-1 {
+      top: 20%;
+      left: -5%;
+      transform: rotate(15deg);
+    }
+
+    .glitch-box-2 {
+      bottom: 30%;
+      right: 40%;
+      transform: rotate(-10deg);
+      border-color: var(--neon-cyan);
+      animation-delay: -2s;
+    }
+
+    @keyframes glitchBox {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.1; }
+      52% { opacity: 0.5; }
+      54% { opacity: 0.2; }
+    }
+
+    /* STATS BAR */
+    .stats-bar {
+      display: flex;
+      gap: 60px;
+      padding: 40px 60px;
+      background: var(--cyber-dark);
+      border-top: 1px solid var(--cyber-mid);
+      border-bottom: 1px solid var(--cyber-mid);
+    }
+
+    .stat {
+      text-align: left;
+    }
+
+    .stat-value {
+      font-family: 'Space Mono', monospace;
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--neon-cyan);
+      line-height: 1;
+      text-shadow: 0 0 20px var(--neon-cyan);
+    }
+
+    .stat-value .suffix {
+      font-size: 1.5rem;
+      color: var(--neon-magenta);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--dim-text);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 8px;
+    }
+
+    /* DOMAINS SECTION */
+    .domains {
+      padding: 120px 60px;
+      position: relative;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 60px;
+    }
+
+    .section-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--neon-magenta);
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 3rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .section-link {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--neon-cyan);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: gap 0.3s ease;
+    }
+
+    .section-link:hover {
+      gap: 16px;
+    }
+
+    .domains-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .domain-card {
+      background: var(--cyber-dark);
+      border: 1px solid var(--cyber-mid);
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+
+    .domain-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--neon-cyan);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .domain-card:hover {
+      border-color: var(--neon-cyan);
+      transform: translateY(-5px);
+    }
+
+    .domain-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .domain-card:nth-child(2)::before { background: var(--neon-magenta); }
+    .domain-card:nth-child(2):hover { border-color: var(--neon-magenta); }
+
+    .domain-card:nth-child(3)::before { background: var(--neon-yellow); }
+    .domain-card:nth-child(3):hover { border-color: var(--neon-yellow); }
+
+    .domain-card:nth-child(4)::before { background: var(--electric-blue); }
+    .domain-card:nth-child(4):hover { border-color: var(--electric-blue); }
+
+    .domain-icon {
+      font-family: 'Space Mono', monospace;
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .domain-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .domain-count {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--dim-text);
+    }
+
+    .domain-desc {
+      font-size: 0.9rem;
+      color: var(--dim-text);
+      margin-top: 15px;
+      line-height: 1.6;
+    }
+
+    /* CTA SECTION */
+    .cta-section {
+      padding: 120px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, var(--neon-magenta) 0%, transparent 70%);
+      opacity: 0.1;
+      transform: translate(-50%, -50%);
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+    }
+
+    .cta-title {
+      font-size: 4rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-title .outline {
+      color: transparent;
+      -webkit-text-stroke: 1px var(--ghost-white);
+    }
+
+    .cta-desc {
+      font-size: 1.2rem;
+      color: var(--dim-text);
+      max-width: 600px;
+      margin: 0 auto 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 40px 60px;
+      border-top: 1px solid var(--cyber-mid);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copy {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--dim-text);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .footer-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--dim-text);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--neon-cyan);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .hero-content {
+        order: 1;
+      }
+
+      .hero-visual {
+        display: none;
+      }
+
+      .hero-desc {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .domains-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats-bar {
+        flex-wrap: wrap;
+        gap: 40px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 15px 20px;
+      }
+
+      nav {
+        display: none;
+      }
+
+      .hero {
+        padding: 100px 20px 60px;
+      }
+
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .domains {
+        padding: 60px 20px;
+      }
+
+      .domains-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+
+      .cta-section {
+        padding: 60px 20px;
+      }
+
+      .cta-title {
+        font-size: 2.5rem;
+      }
+
+      footer {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+  <div class="noise"></div>
+  <div class="grid-bg"></div>
+
+  <header>
+    <div class="logo">
+      <span>Cy</span><span>Tutor</span>
+    </div>
+    <nav>
+      <a href="challenges.html">Challenges</a>
+      <a href="domains.html">Domains</a>
+      <a href="leaderboard.html">Rankings</a>
+      <a href="login.html" class="nav-cta">Jack In</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">Cybersecurity Training Platform</div>
+      <h1 class="hero-title">
+        <span class="line"><span>Breach</span></span>
+        <span class="line"><span>The</span></span>
+        <span class="line"><span class="highlight" data-text="Limits">Limits</span></span>
+      </h1>
+      <p class="hero-desc">
+        Master offensive and defensive security through real-world labs,
+        capture-the-flag challenges, and guided attack simulations.
+        No theory. Pure practice.
+      </p>
+      <div class="hero-actions">
+        <a href="signup.html" class="btn-primary">Start Hacking</a>
+        <a href="challenges.html" class="btn-ghost">View Labs</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="glitch-box glitch-box-1"></div>
+      <div class="glitch-box glitch-box-2"></div>
+
+      <div class="terminal-float terminal-1">
+        <div class="terminal-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+        </div>
+        <div class="terminal-line">
+          <span class="prompt">$</span>
+          <span class="command">nmap -sV target.lab</span>
+        </div>
+        <span class="output">Scanning ports...</span>
+        <span class="output success">Found: 22/ssh, 80/http, 443/https</span>
+      </div>
+
+      <div class="terminal-float terminal-2">
+        <div class="terminal-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+        </div>
+        <div class="terminal-line">
+          <span class="prompt">$</span>
+          <span class="command">cat flag.txt</span>
+        </div>
+        <span class="output success">CTF{y0u_f0und_1t}</span>
+      </div>
+
+      <div class="terminal-float terminal-3">
+        <div class="terminal-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+        </div>
+        <div class="terminal-line">
+          <span class="prompt">$</span>
+          <span class="command">./exploit.py</span>
+        </div>
+        <span class="output">[*] Payload delivered</span>
+        <span class="output success">[+] Shell obtained!</span>
+        <div class="terminal-line">
+          <span class="prompt">#</span>
+          <span class="cursor"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-value">200<span class="suffix">+</span></div>
+      <div class="stat-label">Active Labs</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">12K<span class="suffix">+</span></div>
+      <div class="stat-label">Hackers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">8</div>
+      <div class="stat-label">Domains</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">24<span class="suffix">/7</span></div>
+      <div class="stat-label">Lab Access</div>
+    </div>
+  </div>
+
+  <section class="domains">
+    <div class="section-header">
+      <div>
+        <div class="section-tag">// Training Domains</div>
+        <h2 class="section-title">Pick Your Path</h2>
+      </div>
+      <a href="domains.html" class="section-link">
+        View All Domains <span>&rarr;</span>
+      </a>
+    </div>
+
+    <div class="domains-grid">
+      <div class="domain-card">
+        <div class="domain-icon">&lt;/&gt;</div>
+        <div class="domain-name">Web Exploitation</div>
+        <div class="domain-count">48 challenges</div>
+        <p class="domain-desc">SQL injection, XSS, CSRF, authentication bypasses, and server-side attacks.</p>
+      </div>
+
+      <div class="domain-card">
+        <div class="domain-icon">[&bull;]</div>
+        <div class="domain-name">Binary Exploitation</div>
+        <div class="domain-count">32 challenges</div>
+        <p class="domain-desc">Buffer overflows, ROP chains, format strings, and memory corruption.</p>
+      </div>
+
+      <div class="domain-card">
+        <div class="domain-icon">#!</div>
+        <div class="domain-name">Reverse Engineering</div>
+        <div class="domain-count">36 challenges</div>
+        <p class="domain-desc">Malware analysis, disassembly, debugging, and binary patching.</p>
+      </div>
+
+      <div class="domain-card">
+        <div class="domain-icon">%x</div>
+        <div class="domain-name">Cryptography</div>
+        <div class="domain-count">28 challenges</div>
+        <p class="domain-desc">Classical ciphers, RSA attacks, hash cracking, and protocol weaknesses.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <h2 class="cta-title">
+      Ready to <span class="outline">Level Up</span>?
+    </h2>
+    <p class="cta-desc">
+      Join thousands of security researchers, penetration testers, and curious hackers
+      sharpening their skills in our virtual battleground.
+    </p>
+    <a href="signup.html" class="btn-primary">Create Free Account</a>
+  </section>
+
+  <footer>
+    <div class="footer-copy">&copy; 2024 CyTutor // All systems nominal</div>
+    <div class="footer-links">
+      <a href="#">Discord</a>
+      <a href="#">GitHub</a>
+      <a href="#">Twitter</a>
+      <a href="#">Terms</a>
+    </div>
+  </footer>
+
+  <script>
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.domain-card, .stat').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'all 0.6s ease';
+      observer.observe(el);
+    });
+
+    // Stagger animation for cards
+    document.querySelectorAll('.domain-card').forEach((card, i) => {
+      card.style.transitionDelay = `${i * 0.1}s`;
+    });
+
+    document.querySelectorAll('.stat').forEach((stat, i) => {
+      stat.style.transitionDelay = `${i * 0.1}s`;
+    });
+
+    // Typing effect for terminal
+    const commands = document.querySelectorAll('.command');
+    commands.forEach(cmd => {
+      const text = cmd.textContent;
+      cmd.textContent = '';
+      let i = 0;
+      const type = () => {
+        if (i < text.length) {
+          cmd.textContent += text[i];
+          i++;
+          setTimeout(type, 50 + Math.random() * 50);
+        }
+      };
+      setTimeout(type, 1000 + Math.random() * 2000);
+    });
+  </script>
+</body>
+</html>
