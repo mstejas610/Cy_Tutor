@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CyTutor — Master offensive and defensive cybersecurity through real-world labs, CTF challenges, and guided attack simulations.">
   <title>CyTutor // BREACH THE LIMITS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,6 +21,16 @@
       --dim-text: #6a6a8a;
       --danger-red: #ff3355;
       --success-green: #00ff88;
+
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-2xl: 48px;
+      --space-3xl: 64px;
+      --space-4xl: 96px;
+      --space-5xl: 120px;
     }
 
     * {
@@ -37,7 +48,26 @@
       background: var(--cyber-black);
       color: var(--ghost-white);
       overflow-x: hidden;
-      cursor: crosshair;
+    }
+
+    /* SKIP LINK */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: var(--space-md);
+      background: var(--neon-cyan);
+      color: var(--cyber-black);
+      padding: var(--space-sm) var(--space-md);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      z-index: 10000;
+      transition: top 0.2s ease;
+    }
+
+    .skip-link:focus {
+      top: var(--space-md);
     }
 
     /* SCANLINE OVERLAY */
@@ -53,8 +83,8 @@
         0deg,
         transparent,
         transparent 2px,
-        rgba(0, 0, 0, 0.15) 2px,
-        rgba(0, 0, 0, 0.15) 4px
+        rgba(0, 0, 0, 0.12) 2px,
+        rgba(0, 0, 0, 0.12) 4px
       );
     }
 
@@ -85,6 +115,18 @@
       z-index: -1;
     }
 
+    /* REVEAL ANIMATION BASE */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     /* HEADER */
     header {
       position: fixed;
@@ -92,11 +134,19 @@
       left: 0;
       right: 0;
       z-index: 1000;
-      padding: 20px 40px;
+      padding: var(--space-lg) var(--space-2xl);
       display: flex;
       justify-content: space-between;
       align-items: center;
       background: linear-gradient(180deg, var(--cyber-black) 0%, transparent 100%);
+      transition: background 0.3s ease, backdrop-filter 0.3s ease;
+    }
+
+    header.scrolled {
+      background: rgba(10, 10, 12, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--cyber-mid);
     }
 
     .logo {
@@ -120,7 +170,7 @@
     .logo::before {
       content: '>';
       color: var(--neon-yellow);
-      margin-right: 8px;
+      margin-right: var(--space-sm);
       animation: blink 1s step-end infinite;
     }
 
@@ -130,7 +180,7 @@
 
     nav {
       display: flex;
-      gap: 40px;
+      gap: var(--space-2xl);
       align-items: center;
     }
 
@@ -141,11 +191,11 @@
       text-decoration: none;
       text-transform: uppercase;
       letter-spacing: 2px;
-      transition: all 0.3s ease;
+      transition: color 0.3s ease;
       position: relative;
     }
 
-    nav a::after {
+    nav a:not(.nav-cta)::after {
       content: '';
       position: absolute;
       bottom: -4px;
@@ -157,16 +207,16 @@
       box-shadow: 0 0 10px var(--neon-cyan);
     }
 
-    nav a:hover {
+    nav a:not(.nav-cta):hover {
       color: var(--neon-cyan);
     }
 
-    nav a:hover::after {
+    nav a:not(.nav-cta):hover::after {
       width: 100%;
     }
 
     .nav-cta {
-      padding: 12px 24px;
+      padding: 12px var(--space-lg);
       background: transparent;
       border: 1px solid var(--neon-magenta);
       color: var(--neon-magenta) !important;
@@ -177,11 +227,87 @@
     .nav-cta:hover {
       background: var(--neon-magenta);
       color: var(--cyber-black) !important;
-      box-shadow: 0 0 30px var(--neon-magenta);
+      box-shadow: 0 0 30px rgba(255, 0, 170, 0.4);
     }
 
-    .nav-cta::after {
+    /* MOBILE MENU */
+    .menu-toggle {
       display: none;
+      background: none;
+      border: 1px solid var(--cyber-mid);
+      padding: var(--space-sm) 12px;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      position: relative;
+      z-index: 1002;
+    }
+
+    .menu-toggle span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--ghost-white);
+      transition: all 0.3s ease;
+      transform-origin: center;
+    }
+
+    .menu-toggle[aria-expanded="true"] span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .menu-toggle[aria-expanded="true"] span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-toggle[aria-expanded="true"] span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(10, 10, 12, 0.97);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 1001;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xl);
+    }
+
+    .mobile-nav.open {
+      display: flex;
+    }
+
+    .mobile-nav a {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.2rem;
+      color: var(--ghost-white);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      padding: var(--space-md);
+      transition: color 0.3s ease;
+    }
+
+    .mobile-nav a:hover {
+      color: var(--neon-cyan);
+    }
+
+    .mobile-nav .nav-cta {
+      margin-top: var(--space-md);
+      padding: var(--space-md) var(--space-xl);
+      font-size: 1rem;
     }
 
     /* HERO SECTION */
@@ -189,9 +315,9 @@
       min-height: 100vh;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 60px;
+      gap: var(--space-3xl);
       align-items: center;
-      padding: 120px 60px 60px;
+      padding: var(--space-5xl) var(--space-3xl) var(--space-3xl);
       position: relative;
     }
 
@@ -206,7 +332,7 @@
       color: var(--neon-yellow);
       text-transform: uppercase;
       letter-spacing: 4px;
-      margin-bottom: 20px;
+      margin-bottom: var(--space-lg);
       display: flex;
       align-items: center;
       gap: 12px;
@@ -223,7 +349,7 @@
       font-size: clamp(3rem, 8vw, 6rem);
       font-weight: 900;
       line-height: 0.95;
-      margin-bottom: 30px;
+      margin-bottom: var(--space-xl);
       text-transform: uppercase;
     }
 
@@ -276,7 +402,7 @@
       color: var(--dim-text);
       max-width: 500px;
       line-height: 1.8;
-      margin-bottom: 40px;
+      margin-bottom: var(--space-2xl);
       opacity: 0;
       animation: fadeIn 0.8s ease 0.8s forwards;
     }
@@ -287,13 +413,14 @@
 
     .hero-actions {
       display: flex;
-      gap: 20px;
+      gap: var(--space-lg);
       opacity: 0;
       animation: fadeIn 0.8s ease 1s forwards;
     }
 
     .btn-primary {
-      padding: 18px 40px;
+      display: inline-block;
+      padding: 18px var(--space-2xl);
       background: var(--neon-cyan);
       color: var(--cyber-black);
       font-family: 'Space Mono', monospace;
@@ -321,7 +448,7 @@
     }
 
     .btn-primary:hover {
-      box-shadow: 0 0 40px var(--neon-cyan);
+      box-shadow: 0 0 40px rgba(0, 255, 242, 0.4);
       transform: translateY(-2px);
     }
 
@@ -329,8 +456,14 @@
       left: 100%;
     }
 
+    .btn-primary:focus-visible {
+      outline: 2px solid var(--neon-yellow);
+      outline-offset: 3px;
+    }
+
     .btn-ghost {
-      padding: 18px 40px;
+      display: inline-block;
+      padding: 18px var(--space-2xl);
       background: transparent;
       color: var(--ghost-white);
       font-family: 'Space Mono', monospace;
@@ -349,6 +482,11 @@
       background: rgba(255,255,255,0.05);
     }
 
+    .btn-ghost:focus-visible {
+      outline: 2px solid var(--neon-yellow);
+      outline-offset: 3px;
+    }
+
     /* HERO VISUAL */
     .hero-visual {
       position: relative;
@@ -359,9 +497,10 @@
       position: absolute;
       background: var(--cyber-dark);
       border: 1px solid var(--cyber-mid);
+      border-radius: 4px;
       font-family: 'Space Mono', monospace;
       font-size: 0.85rem;
-      padding: 20px;
+      padding: var(--space-lg);
       animation: float 6s ease-in-out infinite;
     }
 
@@ -394,7 +533,7 @@
     .terminal-header {
       display: flex;
       gap: 6px;
-      margin-bottom: 15px;
+      margin-bottom: var(--space-md);
       padding-bottom: 10px;
       border-bottom: 1px solid var(--cyber-mid);
     }
@@ -410,9 +549,9 @@
     .terminal-dot.green { background: var(--success-green); }
 
     .terminal-line {
-      margin-bottom: 8px;
+      margin-bottom: var(--space-sm);
       display: flex;
-      gap: 8px;
+      gap: var(--space-sm);
     }
 
     .prompt {
@@ -475,9 +614,9 @@
 
     /* STATS BAR */
     .stats-bar {
-      display: flex;
-      gap: 60px;
-      padding: 40px 60px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: var(--space-2xl) var(--space-3xl);
       background: var(--cyber-dark);
       border-top: 1px solid var(--cyber-mid);
       border-bottom: 1px solid var(--cyber-mid);
@@ -485,6 +624,7 @@
 
     .stat {
       text-align: left;
+      padding: var(--space-md) 0;
     }
 
     .stat-value {
@@ -493,7 +633,7 @@
       font-weight: 700;
       color: var(--neon-cyan);
       line-height: 1;
-      text-shadow: 0 0 20px var(--neon-cyan);
+      text-shadow: 0 0 20px rgba(0, 255, 242, 0.3);
     }
 
     .stat-value .suffix {
@@ -506,12 +646,89 @@
       color: var(--dim-text);
       text-transform: uppercase;
       letter-spacing: 2px;
-      margin-top: 8px;
+      margin-top: var(--space-sm);
+    }
+
+    /* HOW IT WORKS SECTION */
+    .how-it-works {
+      padding: var(--space-5xl) var(--space-3xl);
+      position: relative;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-xl);
+      position: relative;
+    }
+
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 56px;
+      left: calc(16.66% + 10px);
+      right: calc(16.66% + 10px);
+      height: 1px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-yellow));
+      opacity: 0.3;
+    }
+
+    .step-card {
+      text-align: center;
+      padding: var(--space-xl);
+      position: relative;
+    }
+
+    .step-number {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--cyber-black);
+      background: var(--neon-cyan);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-lg);
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-card:nth-child(2) .step-number {
+      background: var(--neon-magenta);
+    }
+
+    .step-card:nth-child(3) .step-number {
+      background: var(--neon-yellow);
+    }
+
+    .step-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: var(--space-sm);
+    }
+
+    .step-cmd {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--neon-cyan);
+      margin-bottom: var(--space-md);
+    }
+
+    .step-card:nth-child(2) .step-cmd { color: var(--neon-magenta); }
+    .step-card:nth-child(3) .step-cmd { color: var(--neon-yellow); }
+
+    .step-desc {
+      font-size: 0.95rem;
+      color: var(--dim-text);
+      line-height: 1.7;
     }
 
     /* DOMAINS SECTION */
     .domains {
-      padding: 120px 60px;
+      padding: var(--space-5xl) var(--space-3xl);
       position: relative;
     }
 
@@ -519,7 +736,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      margin-bottom: 60px;
+      margin-bottom: var(--space-3xl);
     }
 
     .section-tag {
@@ -544,24 +761,29 @@
       text-decoration: none;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: var(--space-sm);
       transition: gap 0.3s ease;
     }
 
     .section-link:hover {
-      gap: 16px;
+      gap: var(--space-md);
+    }
+
+    .section-link:focus-visible {
+      outline: 2px solid var(--neon-yellow);
+      outline-offset: 3px;
     }
 
     .domains-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
+      gap: var(--space-lg);
     }
 
     .domain-card {
       background: var(--cyber-dark);
       border: 1px solid var(--cyber-mid);
-      padding: 30px;
+      padding: var(--space-xl);
       position: relative;
       overflow: hidden;
       transition: all 0.4s ease;
@@ -602,32 +824,199 @@
     .domain-icon {
       font-family: 'Space Mono', monospace;
       font-size: 2rem;
-      margin-bottom: 20px;
+      margin-bottom: var(--space-lg);
     }
 
     .domain-name {
       font-size: 1.2rem;
       font-weight: 700;
       text-transform: uppercase;
-      margin-bottom: 10px;
+      margin-bottom: var(--space-sm);
+    }
+
+    .domain-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
     }
 
     .domain-count {
       font-family: 'Space Mono', monospace;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--dim-text);
     }
+
+    .domain-difficulty {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border: 1px solid;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .difficulty-mixed { color: var(--neon-cyan); border-color: var(--neon-cyan); }
+    .difficulty-hard { color: var(--neon-magenta); border-color: var(--neon-magenta); }
+    .difficulty-medium { color: var(--neon-yellow); border-color: var(--neon-yellow); }
 
     .domain-desc {
       font-size: 0.9rem;
       color: var(--dim-text);
-      margin-top: 15px;
       line-height: 1.6;
+    }
+
+    /* FEATURES SECTION */
+    .features {
+      padding: var(--space-5xl) var(--space-3xl);
+      background: var(--cyber-dark);
+      border-top: 1px solid var(--cyber-mid);
+      border-bottom: 1px solid var(--cyber-mid);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .feature-card {
+      padding: var(--space-xl);
+      border: 1px solid var(--cyber-mid);
+      background: var(--cyber-black);
+      transition: border-color 0.3s ease;
+    }
+
+    .feature-card:hover {
+      border-color: var(--dim-text);
+    }
+
+    .feature-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--neon-cyan);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: var(--space-md);
+    }
+
+    .feature-card:nth-child(2) .feature-label { color: var(--neon-magenta); }
+    .feature-card:nth-child(3) .feature-label { color: var(--neon-yellow); }
+    .feature-card:nth-child(4) .feature-label { color: var(--electric-blue); }
+    .feature-card:nth-child(5) .feature-label { color: var(--success-green); }
+    .feature-card:nth-child(6) .feature-label { color: var(--danger-red); }
+
+    .feature-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: var(--space-sm);
+    }
+
+    .feature-desc {
+      font-size: 0.9rem;
+      color: var(--dim-text);
+      line-height: 1.6;
+    }
+
+    .feature-stat {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--ghost-white);
+      margin-top: var(--space-md);
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--cyber-mid);
+    }
+
+    .feature-stat .num {
+      color: var(--neon-cyan);
+      font-weight: 700;
+    }
+
+    .feature-card:nth-child(2) .feature-stat .num { color: var(--neon-magenta); }
+    .feature-card:nth-child(3) .feature-stat .num { color: var(--neon-yellow); }
+
+    /* TESTIMONIALS SECTION */
+    .testimonials {
+      padding: var(--space-5xl) var(--space-3xl);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .testimonial-card {
+      padding: var(--space-xl);
+      border: 1px solid var(--cyber-mid);
+      background: var(--cyber-dark);
+      position: relative;
+    }
+
+    .testimonial-card::before {
+      content: '//';
+      font-family: 'Space Mono', monospace;
+      font-size: 2rem;
+      color: var(--neon-cyan);
+      opacity: 0.3;
+      position: absolute;
+      top: var(--space-md);
+      right: var(--space-lg);
+    }
+
+    .testimonial-card:nth-child(2)::before { color: var(--neon-magenta); }
+    .testimonial-card:nth-child(3)::before { color: var(--neon-yellow); }
+
+    .testimonial-text {
+      font-size: 0.95rem;
+      color: var(--ghost-white);
+      line-height: 1.7;
+      margin-bottom: var(--space-lg);
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .author-avatar {
+      width: 36px;
+      height: 36px;
+      background: var(--cyber-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--neon-cyan);
+      font-weight: 700;
+    }
+
+    .testimonial-card:nth-child(2) .author-avatar { color: var(--neon-magenta); }
+    .testimonial-card:nth-child(3) .author-avatar { color: var(--neon-yellow); }
+
+    .author-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .author-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .author-role {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--dim-text);
     }
 
     /* CTA SECTION */
     .cta-section {
-      padding: 120px 60px;
+      padding: var(--space-5xl) var(--space-3xl);
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -641,7 +1030,7 @@
       width: 800px;
       height: 800px;
       background: radial-gradient(circle, var(--neon-magenta) 0%, transparent 70%);
-      opacity: 0.1;
+      opacity: 0.08;
       transform: translate(-50%, -50%);
       animation: pulse 4s ease-in-out infinite;
     }
@@ -655,7 +1044,7 @@
       font-size: 4rem;
       font-weight: 900;
       text-transform: uppercase;
-      margin-bottom: 20px;
+      margin-bottom: var(--space-lg);
       position: relative;
       z-index: 1;
     }
@@ -666,21 +1055,76 @@
     }
 
     .cta-desc {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: var(--dim-text);
-      max-width: 600px;
-      margin: 0 auto 40px;
+      max-width: 560px;
+      margin: 0 auto var(--space-2xl);
+      position: relative;
+      z-index: 1;
+      line-height: 1.7;
+    }
+
+    .cta-note {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--dim-text);
+      margin-top: var(--space-lg);
       position: relative;
       z-index: 1;
     }
 
     /* FOOTER */
     footer {
-      padding: 40px 60px;
+      padding: var(--space-3xl);
       border-top: 1px solid var(--cyber-mid);
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: var(--space-2xl);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .footer-brand .logo {
+      margin-bottom: var(--space-md);
+    }
+
+    .footer-brand-desc {
+      font-size: 0.9rem;
+      color: var(--dim-text);
+      line-height: 1.6;
+      max-width: 280px;
+    }
+
+    .footer-col-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--ghost-white);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: var(--space-lg);
+    }
+
+    .footer-col a {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--dim-text);
+      text-decoration: none;
+      padding: var(--space-xs) 0;
+      transition: color 0.3s ease;
+    }
+
+    .footer-col a:hover {
+      color: var(--neon-cyan);
+    }
+
+    .footer-bottom {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-top: var(--space-lg);
+      border-top: 1px solid var(--cyber-mid);
     }
 
     .footer-copy {
@@ -689,20 +1133,20 @@
       color: var(--dim-text);
     }
 
-    .footer-links {
+    .footer-bottom-links {
       display: flex;
-      gap: 30px;
+      gap: var(--space-lg);
     }
 
-    .footer-links a {
+    .footer-bottom-links a {
       font-family: 'Space Mono', monospace;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--dim-text);
       text-decoration: none;
       transition: color 0.3s ease;
     }
 
-    .footer-links a:hover {
+    .footer-bottom-links a:hover {
       color: var(--neon-cyan);
     }
 
@@ -721,6 +1165,10 @@
         display: none;
       }
 
+      .hero-tag {
+        justify-content: center;
+      }
+
       .hero-desc {
         margin-left: auto;
         margin-right: auto;
@@ -735,30 +1183,81 @@
       }
 
       .stats-bar {
-        flex-wrap: wrap;
-        gap: 40px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-xl);
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .testimonials-grid .testimonial-card:nth-child(3) {
+        grid-column: 1 / -1;
+        max-width: 480px;
+        margin: 0 auto;
+      }
+
+      .steps-grid::before {
+        display: none;
+      }
+
+      .footer-inner {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-xl);
       }
     }
 
     @media (max-width: 768px) {
       header {
-        padding: 15px 20px;
+        padding: var(--space-md) var(--space-lg);
       }
 
       nav {
         display: none;
       }
 
+      .menu-toggle {
+        display: flex;
+      }
+
       .hero {
-        padding: 100px 20px 60px;
+        padding: 100px var(--space-lg) var(--space-3xl);
       }
 
       .hero-title {
         font-size: 2.5rem;
       }
 
+      .hero-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+        padding: var(--space-xl) var(--space-lg);
+        gap: var(--space-lg);
+      }
+
+      .how-it-works {
+        padding: var(--space-3xl) var(--space-lg);
+      }
+
+      .steps-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+      }
+
+      .steps-grid::before {
+        display: none;
+      }
+
       .domains {
-        padding: 60px 20px;
+        padding: var(--space-3xl) var(--space-lg);
       }
 
       .domains-grid {
@@ -768,11 +1267,35 @@
       .section-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 20px;
+        gap: var(--space-lg);
+      }
+
+      .section-title {
+        font-size: 2rem;
+      }
+
+      .features {
+        padding: var(--space-3xl) var(--space-lg);
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .testimonials {
+        padding: var(--space-3xl) var(--space-lg);
+      }
+
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .testimonials-grid .testimonial-card:nth-child(3) {
+        max-width: none;
       }
 
       .cta-section {
-        padding: 60px 20px;
+        padding: var(--space-3xl) var(--space-lg);
       }
 
       .cta-title {
@@ -780,228 +1303,527 @@
       }
 
       footer {
+        padding: var(--space-2xl) var(--space-lg);
+      }
+
+      .footer-inner {
+        grid-template-columns: 1fr;
+        gap: var(--space-xl);
+      }
+
+      .footer-bottom {
         flex-direction: column;
-        gap: 20px;
+        gap: var(--space-md);
         text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 2rem;
+      }
+
+      .stat-value {
+        font-size: 2.2rem;
+      }
+
+      .cta-title {
+        font-size: 1.8rem;
+      }
+    }
+
+    /* REDUCED MOTION */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+
+      html {
+        scroll-behavior: auto;
       }
     }
   </style>
 </head>
 <body>
-  <div class="scanlines"></div>
-  <div class="noise"></div>
-  <div class="grid-bg"></div>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-bg" aria-hidden="true"></div>
 
-  <header>
-    <div class="logo">
+  <header role="banner">
+    <div class="logo" aria-label="CyTutor">
       <span>Cy</span><span>Tutor</span>
     </div>
-    <nav>
+    <nav aria-label="Main navigation">
       <a href="challenges.html">Challenges</a>
       <a href="domains.html">Domains</a>
       <a href="leaderboard.html">Rankings</a>
       <a href="login.html" class="nav-cta">Jack In</a>
     </nav>
+    <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </header>
 
-  <section class="hero">
-    <div class="hero-content">
-      <div class="hero-tag">Cybersecurity Training Platform</div>
-      <h1 class="hero-title">
-        <span class="line"><span>Breach</span></span>
-        <span class="line"><span>The</span></span>
-        <span class="line"><span class="highlight" data-text="Limits">Limits</span></span>
-      </h1>
-      <p class="hero-desc">
-        Master offensive and defensive security through real-world labs,
-        capture-the-flag challenges, and guided attack simulations.
-        No theory. Pure practice.
-      </p>
-      <div class="hero-actions">
-        <a href="signup.html" class="btn-primary">Start Hacking</a>
-        <a href="challenges.html" class="btn-ghost">View Labs</a>
-      </div>
-    </div>
-
-    <div class="hero-visual">
-      <div class="glitch-box glitch-box-1"></div>
-      <div class="glitch-box glitch-box-2"></div>
-
-      <div class="terminal-float terminal-1">
-        <div class="terminal-header">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-        </div>
-        <div class="terminal-line">
-          <span class="prompt">$</span>
-          <span class="command">nmap -sV target.lab</span>
-        </div>
-        <span class="output">Scanning ports...</span>
-        <span class="output success">Found: 22/ssh, 80/http, 443/https</span>
-      </div>
-
-      <div class="terminal-float terminal-2">
-        <div class="terminal-header">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-        </div>
-        <div class="terminal-line">
-          <span class="prompt">$</span>
-          <span class="command">cat flag.txt</span>
-        </div>
-        <span class="output success">CTF{y0u_f0und_1t}</span>
-      </div>
-
-      <div class="terminal-float terminal-3">
-        <div class="terminal-header">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-        </div>
-        <div class="terminal-line">
-          <span class="prompt">$</span>
-          <span class="command">./exploit.py</span>
-        </div>
-        <span class="output">[*] Payload delivered</span>
-        <span class="output success">[+] Shell obtained!</span>
-        <div class="terminal-line">
-          <span class="prompt">#</span>
-          <span class="cursor"></span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="stats-bar">
-    <div class="stat">
-      <div class="stat-value">200<span class="suffix">+</span></div>
-      <div class="stat-label">Active Labs</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">12K<span class="suffix">+</span></div>
-      <div class="stat-label">Hackers</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">8</div>
-      <div class="stat-label">Domains</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">24<span class="suffix">/7</span></div>
-      <div class="stat-label">Lab Access</div>
-    </div>
+  <div class="mobile-nav" id="mobile-nav" role="dialog" aria-label="Mobile navigation">
+    <a href="challenges.html">Challenges</a>
+    <a href="domains.html">Domains</a>
+    <a href="leaderboard.html">Rankings</a>
+    <a href="login.html" class="nav-cta">Jack In</a>
   </div>
 
-  <section class="domains">
-    <div class="section-header">
-      <div>
-        <div class="section-tag">// Training Domains</div>
-        <h2 class="section-title">Pick Your Path</h2>
+  <main id="main">
+    <section class="hero" aria-label="Hero">
+      <div class="hero-content">
+        <div class="hero-tag">Cybersecurity Training Platform</div>
+        <h1 class="hero-title">
+          <span class="line"><span>Breach</span></span>
+          <span class="line"><span>The</span></span>
+          <span class="line"><span class="highlight" data-text="Limits">Limits</span></span>
+        </h1>
+        <p class="hero-desc">
+          Master offensive and defensive security through real-world labs,
+          capture-the-flag challenges, and guided attack simulations.
+          No theory. Pure practice.
+        </p>
+        <div class="hero-actions">
+          <a href="signup.html" class="btn-primary">Start Hacking</a>
+          <a href="challenges.html" class="btn-ghost">View Labs</a>
+        </div>
       </div>
-      <a href="domains.html" class="section-link">
-        View All Domains <span>&rarr;</span>
-      </a>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="glitch-box glitch-box-1"></div>
+        <div class="glitch-box glitch-box-2"></div>
+
+        <div class="terminal-float terminal-1">
+          <div class="terminal-header">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+          </div>
+          <div class="terminal-line">
+            <span class="prompt">$</span>
+            <span class="command" data-text="nmap -sV target.lab"></span>
+          </div>
+          <span class="output">Scanning ports...</span>
+          <span class="output success">Found: 22/ssh, 80/http, 443/https</span>
+        </div>
+
+        <div class="terminal-float terminal-2">
+          <div class="terminal-header">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+          </div>
+          <div class="terminal-line">
+            <span class="prompt">$</span>
+            <span class="command" data-text="cat flag.txt"></span>
+          </div>
+          <span class="output success">CTF{y0u_f0und_1t}</span>
+        </div>
+
+        <div class="terminal-float terminal-3">
+          <div class="terminal-header">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+          </div>
+          <div class="terminal-line">
+            <span class="prompt">$</span>
+            <span class="command" data-text="./exploit.py"></span>
+          </div>
+          <span class="output">[*] Payload delivered</span>
+          <span class="output success">[+] Shell obtained!</span>
+          <div class="terminal-line">
+            <span class="prompt">#</span>
+            <span class="cursor"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="stats-bar" role="region" aria-label="Platform statistics">
+      <div class="stat reveal">
+        <div class="stat-value"><span data-count="200">0</span><span class="suffix">+</span></div>
+        <div class="stat-label">Active Labs</div>
+      </div>
+      <div class="stat reveal">
+        <div class="stat-value"><span data-count="12" data-suffix="K">0</span><span class="suffix">K+</span></div>
+        <div class="stat-label">Hackers</div>
+      </div>
+      <div class="stat reveal">
+        <div class="stat-value"><span data-count="8">0</span></div>
+        <div class="stat-label">Domains</div>
+      </div>
+      <div class="stat reveal">
+        <div class="stat-value"><span data-count="24">0</span><span class="suffix">/7</span></div>
+        <div class="stat-label">Lab Access</div>
+      </div>
     </div>
 
-    <div class="domains-grid">
-      <div class="domain-card">
-        <div class="domain-icon">&lt;/&gt;</div>
-        <div class="domain-name">Web Exploitation</div>
-        <div class="domain-count">48 challenges</div>
-        <p class="domain-desc">SQL injection, XSS, CSRF, authentication bypasses, and server-side attacks.</p>
+    <section class="how-it-works" aria-labelledby="how-title">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">// Getting Started</div>
+          <h2 class="section-title" id="how-title">Three Steps to Root</h2>
+        </div>
       </div>
 
-      <div class="domain-card">
-        <div class="domain-icon">[&bull;]</div>
-        <div class="domain-name">Binary Exploitation</div>
-        <div class="domain-count">32 challenges</div>
-        <p class="domain-desc">Buffer overflows, ROP chains, format strings, and memory corruption.</p>
+      <div class="steps-grid">
+        <div class="step-card reveal">
+          <div class="step-number">01</div>
+          <h3 class="step-title">Create Account</h3>
+          <div class="step-cmd">$ ssh user@cytutor.io</div>
+          <p class="step-desc">Sign up in seconds. No credit card required. Get immediate access to beginner labs and community challenges.</p>
+        </div>
+        <div class="step-card reveal">
+          <div class="step-number">02</div>
+          <h3 class="step-title">Pick Your Domain</h3>
+          <div class="step-cmd">$ cd /domains/web-exploit</div>
+          <p class="step-desc">Choose from 8 security domains. Each path is structured from fundamentals to advanced techniques with guided progression.</p>
+        </div>
+        <div class="step-card reveal">
+          <div class="step-number">03</div>
+          <h3 class="step-title">Hack the Labs</h3>
+          <div class="step-cmd">$ ./pwn --target lab42</div>
+          <p class="step-desc">Spin up isolated environments on demand. Exploit real vulnerabilities, capture flags, and climb the leaderboard.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="domains" aria-labelledby="domains-title">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">// Training Domains</div>
+          <h2 class="section-title" id="domains-title">Pick Your Path</h2>
+        </div>
+        <a href="domains.html" class="section-link">
+          View All Domains <span aria-hidden="true">&rarr;</span>
+        </a>
       </div>
 
-      <div class="domain-card">
-        <div class="domain-icon">#!</div>
-        <div class="domain-name">Reverse Engineering</div>
-        <div class="domain-count">36 challenges</div>
-        <p class="domain-desc">Malware analysis, disassembly, debugging, and binary patching.</p>
+      <div class="domains-grid">
+        <div class="domain-card reveal">
+          <div class="domain-icon" aria-hidden="true">&lt;/&gt;</div>
+          <div class="domain-name">Web Exploitation</div>
+          <div class="domain-meta">
+            <span class="domain-count">48 challenges</span>
+            <span class="domain-difficulty difficulty-mixed">All Levels</span>
+          </div>
+          <p class="domain-desc">SQL injection, XSS, CSRF, authentication bypasses, and server-side attacks.</p>
+        </div>
+
+        <div class="domain-card reveal">
+          <div class="domain-icon" aria-hidden="true">[&bull;]</div>
+          <div class="domain-name">Binary Exploitation</div>
+          <div class="domain-meta">
+            <span class="domain-count">32 challenges</span>
+            <span class="domain-difficulty difficulty-hard">Advanced</span>
+          </div>
+          <p class="domain-desc">Buffer overflows, ROP chains, format strings, and memory corruption.</p>
+        </div>
+
+        <div class="domain-card reveal">
+          <div class="domain-icon" aria-hidden="true">#!</div>
+          <div class="domain-name">Reverse Engineering</div>
+          <div class="domain-meta">
+            <span class="domain-count">36 challenges</span>
+            <span class="domain-difficulty difficulty-hard">Advanced</span>
+          </div>
+          <p class="domain-desc">Malware analysis, disassembly, debugging, and binary patching.</p>
+        </div>
+
+        <div class="domain-card reveal">
+          <div class="domain-icon" aria-hidden="true">%x</div>
+          <div class="domain-name">Cryptography</div>
+          <div class="domain-meta">
+            <span class="domain-count">28 challenges</span>
+            <span class="domain-difficulty difficulty-medium">Intermediate</span>
+          </div>
+          <p class="domain-desc">Classical ciphers, RSA attacks, hash cracking, and protocol weaknesses.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" aria-labelledby="features-title">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">// Platform</div>
+          <h2 class="section-title" id="features-title">Built for Hackers</h2>
+        </div>
       </div>
 
-      <div class="domain-card">
-        <div class="domain-icon">%x</div>
-        <div class="domain-name">Cryptography</div>
-        <div class="domain-count">28 challenges</div>
-        <p class="domain-desc">Classical ciphers, RSA attacks, hash cracking, and protocol weaknesses.</p>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-label">// Environments</div>
+          <h3 class="feature-title">Isolated Lab Instances</h3>
+          <p class="feature-desc">Each challenge spins up a dedicated environment. Break things without consequences — reset anytime.</p>
+          <div class="feature-stat">Avg. spin-up: <span class="num">&lt;8s</span></div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-label">// Progression</div>
+          <h3 class="feature-title">Guided Learning Paths</h3>
+          <p class="feature-desc">Structured skill trees from beginner to advanced. Unlock harder challenges as you prove your skills.</p>
+          <div class="feature-stat">Completion rate: <span class="num">73%</span> vs 12% industry avg</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-label">// Hints</div>
+          <h3 class="feature-title">Progressive Hint System</h3>
+          <p class="feature-desc">Stuck? Get nudges, not answers. Each hint costs points — rewarding those who push through independently.</p>
+          <div class="feature-stat"><span class="num">3-tier</span> hint system per challenge</div>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-label">// Competition</div>
+          <h3 class="feature-title">Live Leaderboards</h3>
+          <p class="feature-desc">Compete globally or within your team. Weekly challenges keep the competition fresh and the skills sharp.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-label">// Writeups</div>
+          <h3 class="feature-title">Community Writeups</h3>
+          <p class="feature-desc">After solving a challenge, read and share solution writeups. Learn different approaches from the community.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-label">// Real-World</div>
+          <h3 class="feature-title">CVE-Based Challenges</h3>
+          <p class="feature-desc">Practice exploiting real CVEs in safe, sandboxed replicas. Train on the same vulns found in the wild.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials" aria-labelledby="testimonials-title">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">// Signal</div>
+          <h2 class="section-title" id="testimonials-title">From the Community</h2>
+        </div>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card reveal">
+          <p class="testimonial-text">"The lab environments are incredibly realistic. I practiced the exact same exploit chains here that I later used in a real pentest engagement."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">r0</div>
+            <div class="author-info">
+              <span class="author-name">root_overflow</span>
+              <span class="author-role">Penetration Tester</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal">
+          <p class="testimonial-text">"Went from zero binary exploitation knowledge to popping shells in 3 months. The progression system actually works — you feel yourself leveling up."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">nx</div>
+            <div class="author-info">
+              <span class="author-name">null_xero</span>
+              <span class="author-role">Security Researcher</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal">
+          <p class="testimonial-text">"We use CyTutor to onboard new SOC analysts. The guided paths get them productive faster than any classroom training we've tried."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">k8</div>
+            <div class="author-info">
+              <span class="author-name">k8s_admin</span>
+              <span class="author-role">Security Lead, FinTech</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section" aria-label="Call to action">
+      <h2 class="cta-title">
+        Ready to <span class="outline">Level Up</span>?
+      </h2>
+      <p class="cta-desc">
+        Join thousands of security researchers, penetration testers, and curious hackers
+        sharpening their skills in our virtual battleground.
+      </p>
+      <a href="signup.html" class="btn-primary">Create Free Account</a>
+      <p class="cta-note">No credit card required. Free tier includes 20+ labs.</p>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo" aria-hidden="true">
+          <span>Cy</span><span>Tutor</span>
+        </div>
+        <p class="footer-brand-desc">Open-source cybersecurity training platform. Learn offensive and defensive security through hands-on practice.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Platform</div>
+        <a href="challenges.html">Challenges</a>
+        <a href="domains.html">Domains</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Community</div>
+        <a href="#">Discord</a>
+        <a href="#">GitHub</a>
+        <a href="#">Twitter</a>
+        <a href="#">Blog</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Legal</div>
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Responsible Disclosure</a>
       </div>
     </div>
-  </section>
-
-  <section class="cta-section">
-    <h2 class="cta-title">
-      Ready to <span class="outline">Level Up</span>?
-    </h2>
-    <p class="cta-desc">
-      Join thousands of security researchers, penetration testers, and curious hackers
-      sharpening their skills in our virtual battleground.
-    </p>
-    <a href="signup.html" class="btn-primary">Create Free Account</a>
-  </section>
-
-  <footer>
-    <div class="footer-copy">&copy; 2024 CyTutor // All systems nominal</div>
-    <div class="footer-links">
-      <a href="#">Discord</a>
-      <a href="#">GitHub</a>
-      <a href="#">Twitter</a>
-      <a href="#">Terms</a>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; <span id="year"></span> CyTutor // All systems nominal</div>
+      <div class="footer-bottom-links">
+        <a href="#">Status</a>
+        <a href="#">Changelog</a>
+      </div>
     </div>
   </footer>
 
   <script>
-    // Intersection Observer for scroll animations
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
+    // Dynamic copyright year
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-    const observer = new IntersectionObserver((entries) => {
+    // Header scroll effect
+    const header = document.querySelector('header');
+    let lastScroll = 0;
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 80) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    }, { passive: true });
+
+    // Mobile menu
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    menuToggle.addEventListener('click', () => {
+      const isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
+      menuToggle.setAttribute('aria-expanded', !isOpen);
+      menuToggle.setAttribute('aria-label', isOpen ? 'Open menu' : 'Close menu');
+      mobileNav.classList.toggle('open');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    });
+
+    // Close mobile menu on link click
+    mobileNav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.setAttribute('aria-label', 'Open menu');
+        mobileNav.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // Close mobile menu on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileNav.classList.contains('open')) {
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.setAttribute('aria-label', 'Open menu');
+        mobileNav.classList.remove('open');
+        document.body.style.overflow = '';
+        menuToggle.focus();
+      }
+    });
+
+    // Scroll reveal with IntersectionObserver
+    const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
         }
       });
-    }, observerOptions);
-
-    document.querySelectorAll('.domain-card, .stat').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(30px)';
-      el.style.transition = 'all 0.6s ease';
-      observer.observe(el);
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -40px 0px'
     });
 
-    // Stagger animation for cards
-    document.querySelectorAll('.domain-card').forEach((card, i) => {
-      card.style.transitionDelay = `${i * 0.1}s`;
+    document.querySelectorAll('.reveal').forEach((el, i) => {
+      // Stagger siblings of the same parent
+      const siblings = Array.from(el.parentElement.querySelectorAll('.reveal'));
+      const siblingIndex = siblings.indexOf(el);
+      el.style.transitionDelay = `${siblingIndex * 0.1}s`;
+      revealObserver.observe(el);
     });
 
-    document.querySelectorAll('.stat').forEach((stat, i) => {
-      stat.style.transitionDelay = `${i * 0.1}s`;
-    });
+    // Animated stat counters
+    const countObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseInt(el.dataset.count, 10);
+          const duration = 1500;
+          const start = performance.now();
 
-    // Typing effect for terminal
-    const commands = document.querySelectorAll('.command');
-    commands.forEach(cmd => {
-      const text = cmd.textContent;
-      cmd.textContent = '';
-      let i = 0;
-      const type = () => {
-        if (i < text.length) {
-          cmd.textContent += text[i];
-          i++;
-          setTimeout(type, 50 + Math.random() * 50);
+          const animate = (now) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(target * eased);
+
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            } else {
+              el.textContent = target;
+            }
+          };
+
+          requestAnimationFrame(animate);
+          countObserver.unobserve(el);
         }
-      };
-      setTimeout(type, 1000 + Math.random() * 2000);
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('[data-count]').forEach(el => {
+      countObserver.observe(el);
+    });
+
+    // Terminal typing effect
+    const commands = document.querySelectorAll('.command[data-text]');
+    const typingObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const cmd = entry.target;
+          const text = cmd.dataset.text;
+          cmd.textContent = '';
+          let i = 0;
+
+          const type = () => {
+            if (i < text.length) {
+              cmd.textContent += text[i];
+              i++;
+              setTimeout(type, 50 + Math.random() * 50);
+            }
+          };
+
+          setTimeout(type, 500 + Math.random() * 1000);
+          typingObserver.unobserve(cmd);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    commands.forEach(cmd => {
+      typingObserver.observe(cmd);
     });
   </script>
 </body>
